@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindEase - AI Therapist Chat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #2C3E50;
+            background: #F5E6D3;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Navigation */
+        .navbar {
+            background: white;
+            padding: 20px 60px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: #4A9B9B;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            transition: color 0.3s;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+        
+        .nav-link:hover {
+            color: #4A9B9B;
+            background: #F5E6D3;
+        }
+        
+        .nav-link.active {
+            color: #4A9B9B;
+            background: #F5E6D3;
+            font-weight: 600;
+        }
+        
+        /* Chat Layout */
+        .chat-layout {
+            display: flex;
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        /* Chat Main */
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            margin: 20px 0 20px 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        /* Chat Header */
+        .chat-header {
+            background: linear-gradient(135deg, #4A9B9B 0%, #3D8282 100%);
+            color: white;
+            padding: 24px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .therapist-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .therapist-avatar {
+            width: 50px;
+            height: 50px;
+            background: white;
+            color: #4A9B9B;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        
+        .therapist-details h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .therapist-status {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #90EE90;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .action-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .action-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* Chat Messages */
+        .chat-messages {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            background: #F5E6D3;
+        }
+        
+        .message {
+            margin-bottom: 24px;
+            display: flex;
+            gap: 12px;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message.user {
+            flex-direction: row-reverse;
+        }
+        
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 20px;
+        }
+        
+        .message.ai .message-avatar {
+            background: #4A9B9B;
+            color: white;
+        }
+        
+        .message.user .message-avatar {
+            background: #8B7AA8;
+            color: white;
+        }
+        
+        .message-content {
+            max-width: 65%;
+            background: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .message.user .message-content {
+            background: #8B7AA8;
+            color: white;
+        }
+        
+        .message-text {
+            margin-bottom: 8px;
+            line-height: 1.7;
+        }
+        
+        .message-time {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        /* Conversation Starters */
+        .conversation-starters {
+            text-align: center;
+            padding: 60px 30px;
+        }
+        
+        .starter-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: #2C3E50;
+            margin-bottom: 40px;
+        }
+        
+        .starter-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .starter-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .starter-card:hover {
+            background: #4A9B9B;
+            color: white;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(74, 155, 155, 0.3);
+        }
+        
+        .starter-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+        
+        .starter-text {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        /* Chat Input */
+        .chat-input-area {
+            background: white;
+            padding: 24px 30px;
+            border-top: 1px solid #ECF0F1;
+        }
+        
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: end;
+        }
+        
+        .chat-input {
+            flex: 1;
+            border: 2px solid #ECF0F1;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 16px;
+            resize: none;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+            max-height: 120px;
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: #4A9B9B;
+            box-shadow: 0 0 0 3px rgba(74, 155, 155, 0.1);
+        }
+        
+        .send-button {
+            background: #4A9B9B;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+        
+        .send-button:hover {
+            background: #3D8282;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(74, 155, 155, 0.3);
+        }
+        
+        .input-note {
+            font-size: 12px;
+            color: #999;
+            margin-top: 12px;
+            text-align: center;
+        }
+        
+        .input-note strong {
+            color: #4A9B9B;
+        }
+        
+        /* Sidebar */
+        .chat-sidebar {
+            width: 320px;
+            background: white;
+            margin: 20px 20px 20px 0;
+            border-radius: 16px;
+            padding: 30px 24px;
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-section {
+            margin-bottom: 32px;
+        }
+        
+        .sidebar-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: #2C3E50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tip-box {
+            background: #F5E6D3;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .tip-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #2C3E50;
+        }
+        
+        .tip-text {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .resource-link {
+            background: #F5E6D3;
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s;
+        }
+        
+        .resource-link:hover {
+            background: #4A9B9B;
+            color: white;
+            transform: translateX(4px);
+        }
+        
+        .resource-icon {
+            font-size: 20px;
+        }
+        
+        .crisis-box {
+            background: linear-gradient(135deg, #8B7AA8 0%, #75679A 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .crisis-box strong {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+        
+        .crisis-box p {
+            font-size: 14px;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 1024px) {
+            .chat-sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">MindEase</div>
+            <div class="nav-links">
+                <a href="mindease_dashboard_prototype.html" class="nav-link">Dashboard</a>
+                <a href="mindease_chatbot_prototype.html" class="nav-link active">AI Chat</a>
+                <a href="mindease_journal_prototype.html" class="nav-link">Journal</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Chat Layout -->
+    <div class="chat-layout">
+        <!-- Main Chat Area -->
+        <div class="chat-main">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <div class="therapist-info">
+                    <div class="therapist-avatar">🤖</div>
+                    <div class="therapist-details">
+                        <h3>MindEase AI Therapist</h3>
+                        <div class="therapist-status">
+                            <span class="status-dot"></span>
+                            Online - Always here to listen
+                        </div>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="action-btn" onclick="startNewChat()">New Chat</button>
+                    <button class="action-btn">History</button>
+                </div>
+            </div>
+            
+            <!-- Chat Messages -->
+            <div class="chat-messages" id="chatMessages">
+                <!-- Conversation Starters -->
+                <div class="conversation-starters" id="starters">
+                    <div class="starter-title">How can I support you today?</div>
+                    <div class="starter-grid">
+                        <div class="starter-card" onclick="startConversation('anxious')">
+                            <div class="starter-icon">😟</div>
+                            <div class="starter-text">I'm feeling anxious</div>
+                        </div>
+                        <div class="starter-card" onclick="startConversation('down')">
+                            <div class="starter-icon">😔</div>
+                            <div class="starter-text">I'm feeling down</div>
+                        </div>
+                        <div class="starter-card" onclick="startConversation('stressed')">
+                            <div class="starter-icon">😤</div>
+                            <div class="starter-text">I'm stressed about work</div>
+                        </div>
+                        <div class="starter-card" onclick="startConversation('talk')">
+                            <div class="starter-icon">💭</div>
+                            <div class="starter-text">Just need to talk</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Messages Container -->
+                <div id="messagesContainer" class="hidden"></div>
+            </div>
+            
+            <!-- Chat Input -->
+            <div class="chat-input-area">
+                <div class="input-wrapper">
+                    <textarea 
+                        class="chat-input" 
+                        rows="2" 
+                        placeholder="Type your message here... Share whatever's on your mind"
+                        id="messageInput"
+                        onkeypress="handleKeyPress(event)"></textarea>
+                    <button class="send-button" onclick="sendMessage()">Send →</button>
+                </div>
+                <div class="input-note">
+                    🔒 <strong>Your conversation is private and secure.</strong> MindEase AI is not a replacement for professional therapy.
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <aside class="chat-sidebar">
+            <!-- Quick Tips -->
+            <div class="sidebar-section">
+                <div class="sidebar-title">💡 Quick Tips</div>
+                <div class="tip-box">
+                    <div class="tip-title">Be Open & Honest</div>
+                    <div class="tip-text">
+                        Share your true feelings. This is a judgment-free space.
+                    </div>
+                </div>
+                <div class="tip-box">
+                    <div class="tip-title">Take Your Time</div>
+                    <div class="tip-text">
+                        There's no rush. Respond when you're ready.
+                    </div>
+                </div>
+                <div class="tip-box">
+                    <div class="tip-title">Ask Questions</div>
+                    <div class="tip-text">
+                        Feel free to ask for clarification or guidance.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Wellness Exercises -->
+            <div class="sidebar-section">
+                <div class="sidebar-title">🧘 Try These</div>
+                <div class="resource-link">
+                    <div class="resource-icon">🫁</div>
+                    <div>5-Minute Breathing Exercise</div>
+                </div>
+                <div class="resource-link">
+                    <div class="resource-icon">📝</div>
+                    <div>Thought Journaling Guide</div>
+                </div>
+                <div class="resource-link">
+                    <div class="resource-icon">🎯</div>
+                    <div>Grounding Techniques</div>
+                </div>
+                <div class="resource-link">
+                    <div class="resource-icon">😌</div>
+                    <div>Progressive Relaxation</div>
+                </div>
+            </div>
+            
+            <!-- Crisis Resources -->
+            <div class="sidebar-section">
+                <div class="crisis-box">
+                    <strong>🆘 Need Immediate Help?</strong>
+                    <p>
+                        <strong>Crisis Helpline:</strong><br>
+                        📞 1-800-XXX-XXXX<br><br>
+                        <strong>Text Support:</strong><br>
+                        💬 Text "HELLO" to 741741<br><br>
+                        Available 24/7 for emergencies
+                    </p>
+                </div>
+            </div>
+        </aside>
+    </div>
+    
+    <script>
+        function startConversation(type) {
+            const messages = {
+                anxious: "I've been feeling really anxious lately.",
+                down: "I'm feeling down and don't know why.",
+                stressed: "I'm really stressed about work deadlines.",
+                talk: "I just need someone to talk to right now."
+            };
+            
+            document.getElementById('starters').classList.add('hidden');
+            document.getElementById('messagesContainer').classList.remove('hidden');
+            
+            addAIMessage("Hello! I'm here to listen and support you. This is a safe, judgment-free space where you can share whatever's on your mind. How are you feeling today?");
+            
+            setTimeout(() => {
+                addUserMessage(messages[type]);
+                setTimeout(() => {
+                    addAIMessage("I hear you, and thank you for sharing that with me. Your feelings are completely valid. Can you tell me a bit more about what's been going on? Sometimes talking through things can help us understand them better.");
+                }, 1500);
+            }, 1000);
+        }
+        
+        function addAIMessage(text) {
+            const container = document.getElementById('messagesContainer');
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            const messageHTML = `
+                <div class="message ai">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        <div class="message-text">${text}</div>
+                        <div class="message-time">${time}</div>
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', messageHTML);
+            scrollToBottom();
+        }
+        
+        function addUserMessage(text) {
+            const container = document.getElementById('messagesContainer');
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            const messageHTML = `
+                <div class="message user">
+                    <div class="message-avatar">👤</div>
+                    <div class="message-content">
+                        <div class="message-text">${text}</div>
+                        <div class="message-time">${time}</div>
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', messageHTML);
+            scrollToBottom();
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            
+            if (text) {
+                if (document.getElementById('starters').classList.contains('hidden') === false) {
+                    document.getElementById('starters').classList.add('hidden');
+                    document.getElementById('messagesContainer').classList.remove('hidden');
+                    addAIMessage("Hello! I'm here to listen and support you. This is a safe, judgment-free space where you can share whatever's on your mind. How are you feeling today?");
+                }
+                
+                addUserMessage(text);
+                input.value = '';
+                
+                setTimeout(() => {
+                    addAIMessage("Thank you for sharing that with me. I'm here to support you through this. Would you like to explore this feeling further, or is there something specific you'd like guidance on?");
+                }, 1500);
+            }
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+        
+        function scrollToBottom() {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function startNewChat() {
+            document.getElementById('starters').classList.remove('hidden');
+            document.getElementById('messagesContainer').classList.add('hidden');
+            document.getElementById('messagesContainer').innerHTML = '';
+            document.getElementById('messageInput').value = '';
+        }
+    </script>
+</body>
+</html>

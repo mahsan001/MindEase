@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindEase - Journal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #2C3E50;
+            background: #F5E6D3;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Navigation */
+        .navbar {
+            background: white;
+            padding: 20px 60px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: #4A9B9B;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            transition: color 0.3s;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+        
+        .nav-link:hover {
+            color: #4A9B9B;
+            background: #F5E6D3;
+        }
+        
+        .nav-link.active {
+            color: #4A9B9B;
+            background: #F5E6D3;
+            font-weight: 600;
+        }
+        
+        /* Journal Layout */
+        .journal-layout {
+            display: flex;
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            overflow: hidden;
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        /* Editor Section */
+        .editor-section {
+            flex: 1.5;
+            background: white;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .editor-header {
+            background: linear-gradient(135deg, #4A9B9B 0%, #3D8282 100%);
+            color: white;
+            padding: 30px;
+        }
+        
+        .editor-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .editor-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .editor-toolbar {
+            padding: 16px 30px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            background: #F5E6D3;
+            border-bottom: 1px solid #ECF0F1;
+        }
+        
+        .toolbar-btn {
+            background: white;
+            border: 1px solid #ECF0F1;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #2C3E50;
+        }
+        
+        .toolbar-btn:hover {
+            background: #4A9B9B;
+            color: white;
+            border-color: #4A9B9B;
+        }
+        
+        .toolbar-separator {
+            width: 1px;
+            height: 24px;
+            background: #ECF0F1;
+            margin: 0 4px;
+        }
+        
+        .editor-content {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+        }
+        
+        .entry-title-input {
+            border: 2px solid #ECF0F1;
+            padding: 16px 20px;
+            font-size: 24px;
+            font-weight: 600;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+        }
+        
+        .entry-title-input:focus {
+            outline: none;
+            border-color: #4A9B9B;
+            box-shadow: 0 0 0 3px rgba(74, 155, 155, 0.1);
+        }
+        
+        .entry-meta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .meta-item {
+            background: #F5E6D3;
+            padding: 10px 16px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        .meta-label {
+            font-weight: 600;
+        }
+        
+        .mood-selector {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .mood-option {
+            width: 42px;
+            height: 42px;
+            border: 2px solid #ECF0F1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+            transition: all 0.3s;
+            background: white;
+        }
+        
+        .mood-option:hover {
+            border-color: #4A9B9B;
+            transform: scale(1.1);
+        }
+        
+        .mood-option.selected {
+            background: #4A9B9B;
+            border-color: #4A9B9B;
+            transform: scale(1.1);
+        }
+        
+        .entry-textarea {
+            flex: 1;
+            border: 2px solid #ECF0F1;
+            padding: 20px;
+            font-size: 16px;
+            line-height: 1.8;
+            resize: none;
+            font-family: 'Inter', sans-serif;
+            border-radius: 8px;
+            min-height: 300px;
+            transition: all 0.3s;
+        }
+        
+        .entry-textarea:focus {
+            outline: none;
+            border-color: #4A9B9B;
+            box-shadow: 0 0 0 3px rgba(74, 155, 155, 0.1);
+        }
+        
+        .ai-analysis-section {
+            background: #F5E6D3;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .ai-toggle {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+        
+        .toggle-switch {
+            width: 48px;
+            height: 26px;
+            background: #ECF0F1;
+            border-radius: 13px;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .toggle-switch.active {
+            background: #4A9B9B;
+        }
+        
+        .toggle-slider {
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .toggle-switch.active .toggle-slider {
+            left: 24px;
+        }
+        
+        .ai-analysis-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.7;
+            display: none;
+        }
+        
+        .ai-analysis-content.active {
+            display: block;
+        }
+        
+        .ai-analysis-content strong {
+            color: #4A9B9B;
+            font-size: 15px;
+        }
+        
+        .editor-actions {
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            background: #F5E6D3;
+            border-top: 1px solid #ECF0F1;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .btn-primary {
+            background: #4A9B9B;
+            color: white;
+            padding: 14px 32px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .btn-primary:hover {
+            background: #3D8282;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(74, 155, 155, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #666;
+            padding: 14px 32px;
+            border: 2px solid #ECF0F1;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .btn-secondary:hover {
+            border-color: #4A9B9B;
+            color: #4A9B9B;
+        }
+        
+        .btn-delete {
+            background: transparent;
+            color: #e74c3c;
+            padding: 14px 32px;
+            border: 2px solid #e74c3c;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .btn-delete:hover {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        /* Entries Section */
+        .entries-section {
+            flex: 1;
+            background: white;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .entries-header {
+            background: linear-gradient(135deg, #8B7AA8 0%, #75679A 100%);
+            color: white;
+            padding: 30px;
+        }
+        
+        .entries-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .search-filter {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            background: rgba(255,255,255,0.9);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            background: white;
+        }
+        
+        .filter-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .entries-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .entry-card {
+            background: #F5E6D3;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .entry-card:hover {
+            border-color: #8B7AA8;
+            transform: translateX(4px);
+        }
+        
+        .entry-card.active {
+            background: #8B7AA8;
+            color: white;
+            border-color: #8B7AA8;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+        
+        .card-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .card-mood {
+            font-size: 24px;
+        }
+        
+        .card-date {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+        
+        .card-preview {
+            font-size: 14px;
+            line-height: 1.5;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            opacity: 0.9;
+        }
+        
+        .card-tags {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .tag {
+            background: rgba(255,255,255,0.3);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .entry-card.active .tag {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .entries-stats {
+            padding: 20px;
+            text-align: center;
+            background: #F5E6D3;
+            border-top: 1px solid #ECF0F1;
+        }
+        
+        .stats-text {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 1024px) {
+            .journal-layout {
+                flex-direction: column;
+            }
+            
+            .entries-section {
+                max-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">MindEase</div>
+            <div class="nav-links">
+                <a href="mindease_dashboard_prototype.html" class="nav-link">Dashboard</a>
+                <a href="mindease_chatbot_prototype.html" class="nav-link">AI Chat</a>
+                <a href="mindease_journal_prototype.html" class="nav-link active">Journal</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Journal Layout -->
+    <div class="journal-layout">
+        <!-- Editor Section -->
+        <div class="editor-section">
+            <div class="editor-header">
+                <div class="editor-title">
+                    <span>✍️</span>
+                    Write Your Journal Entry
+                </div>
+                <div class="editor-subtitle">Express your thoughts freely in this private space</div>
+            </div>
+            
+            <div class="editor-toolbar">
+                <button class="toolbar-btn"><strong>B</strong></button>
+                <button class="toolbar-btn"><em>I</em></button>
+                <button class="toolbar-btn"><u>U</u></button>
+                <div class="toolbar-separator"></div>
+                <button class="toolbar-btn">• List</button>
+                <button class="toolbar-btn">1. List</button>
+                <div class="toolbar-separator"></div>
+                <button class="toolbar-btn">Link</button>
+                <button class="toolbar-btn">Quote</button>
+            </div>
+            
+            <div class="editor-content">
+                <input 
+                    type="text" 
+                    class="entry-title-input" 
+                    placeholder="Entry Title (Optional)" 
+                    value="Feeling Better Today">
+                
+                <div class="entry-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">📅 Date:</span>
+                        <span>October 22, 2025 - 3:45 PM</span>
+                    </div>
+                    
+                    <div class="meta-item">
+                        <span class="meta-label">😊 Mood:</span>
+                        <div class="mood-selector">
+                            <div class="mood-option" onclick="selectMood(this)">😢</div>
+                            <div class="mood-option" onclick="selectMood(this)">😟</div>
+                            <div class="mood-option" onclick="selectMood(this)">😐</div>
+                            <div class="mood-option selected" onclick="selectMood(this)">😊</div>
+                            <div class="mood-option" onclick="selectMood(this)">😄</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <textarea 
+                    class="entry-textarea" 
+                    placeholder="Start writing your thoughts here...
+
+What happened today?
+How are you feeling?
+What's on your mind?
+
+This is your safe space to express yourself freely.">Had a really productive day today. Managed to complete my work tasks without feeling overwhelmed, which is a big improvement from last week.
+
+The breathing exercises I learned from the AI therapist have been really helpful. I practiced them twice today - once in the morning and once during my lunch break. I noticed they really helped calm my nerves before the team meeting.
+
+I'm feeling more in control and less anxious. It's nice to see progress, even if it's small steps. Going to keep up with the daily tips and maybe try journaling more regularly.</textarea>
+                
+                <div class="ai-analysis-section">
+                    <div class="ai-toggle" onclick="toggleAI()">
+                        <div class="toggle-switch active" id="aiToggle">
+                            <div class="toggle-slider"></div>
+                        </div>
+                        <span><strong>Enable AI Analysis</strong> (Optional - analyzes emotional patterns)</span>
+                    </div>
+                    <div class="ai-analysis-content active" id="aiContent">
+                        <strong>🤖 AI Insights:</strong><br><br>
+                        Your entry shows positive emotional progression. Key themes detected: progress, self-care practices, reduced anxiety. The breathing exercises appear to be a helpful coping mechanism. Consider exploring more structured relaxation techniques.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="editor-actions">
+                <div class="action-buttons">
+                    <button class="btn-primary" onclick="saveEntry()">💾 Save Entry</button>
+                    <button class="btn-secondary" onclick="clearEntry()">Clear</button>
+                </div>
+                <button class="btn-delete" onclick="deleteEntry()">🗑️ Delete</button>
+            </div>
+        </div>
+        
+        <!-- Entries List Section -->
+        <div class="entries-section">
+            <div class="entries-header">
+                <div class="entries-title">
+                    <span>📚</span>
+                    Your Journal Entries
+                </div>
+                <div class="search-filter">
+                    <input type="text" class="search-input" placeholder="Search entries...">
+                    <button class="filter-btn">Filter ▼</button>
+                </div>
+            </div>
+            
+            <div class="entries-list">
+                <div class="entry-card active" onclick="selectEntry(this)">
+                    <div class="card-header">
+                        <div class="card-title">Feeling Better Today</div>
+                        <div class="card-mood">😊</div>
+                    </div>
+                    <div class="card-date">📅 Oct 22, 2025 - 3:45 PM</div>
+                    <div class="card-preview">
+                        Had a really productive day today. Managed to complete my work tasks without feeling overwhelmed...
+                    </div>
+                    <div class="card-tags">
+                        <span class="tag">progress</span>
+                        <span class="tag">positive</span>
+                    </div>
+                </div>
+                
+                <div class="entry-card" onclick="selectEntry(this)">
+                    <div class="card-header">
+                        <div class="card-title">Weekend Reflections</div>
+                        <div class="card-mood">😌</div>
+                    </div>
+                    <div class="card-date">📅 Oct 20, 2025 - 8:30 PM</div>
+                    <div class="card-preview">
+                        Spent quality time with family this weekend. It reminded me of what's truly important...
+                    </div>
+                    <div class="card-tags">
+                        <span class="tag">family</span>
+                        <span class="tag">reflection</span>
+                    </div>
+                </div>
+                
+                <div class="entry-card" onclick="selectEntry(this)">
+                    <div class="card-header">
+                        <div class="card-title">Dealing with Anxiety</div>
+                        <div class="card-mood">😟</div>
+                    </div>
+                    <div class="card-date">📅 Oct 19, 2025 - 8:15 AM</div>
+                    <div class="card-preview">
+                        Woke up feeling anxious about the presentation today. Talked to the AI therapist which helped...
+                    </div>
+                    <div class="card-tags">
+                        <span class="tag">anxiety</span>
+                        <span class="tag">work</span>
+                    </div>
+                </div>
+                
+                <div class="entry-card" onclick="selectEntry(this)">
+                    <div class="card-header">
+                        <div class="card-title">Gratitude Practice</div>
+                        <div class="card-mood">😊</div>
+                    </div>
+                    <div class="card-date">📅 Oct 17, 2025 - 9:00 PM</div>
+                    <div class="card-preview">
+                        Three things I'm grateful for today: Supportive friends, beautiful weather, progress on goals...
+                    </div>
+                    <div class="card-tags">
+                        <span class="tag">gratitude</span>
+                    </div>
+                </div>
+                
+                <div class="entry-card" onclick="selectEntry(this)">
+                    <div class="card-header">
+                        <div class="card-title">First Day Using MindEase</div>
+                        <div class="card-mood">😐</div>
+                    </div>
+                    <div class="card-date">📅 Oct 15, 2025 - 2:15 PM</div>
+                    <div class="card-preview">
+                        Starting this journaling journey. Not sure what to expect, but feeling hopeful...
+                    </div>
+                    <div class="card-tags">
+                        <span class="tag">new-start</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="entries-stats">
+                <div class="stats-text">
+                    <strong>24 Total Entries</strong> • Last 30 Days
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function selectMood(element) {
+            document.querySelectorAll('.mood-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+        
+        function toggleAI() {
+            const toggle = document.getElementById('aiToggle');
+            const content = document.getElementById('aiContent');
+            toggle.classList.toggle('active');
+            content.classList.toggle('active');
+        }
+        
+        function selectEntry(element) {
+            document.querySelectorAll('.entry-card').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+        }
+        
+        function saveEntry() {
+            alert('✅ Journal entry saved successfully!');
+        }
+        
+        function clearEntry() {
+            if (confirm('Are you sure you want to clear this entry?')) {
+                document.querySelector('.entry-title-input').value = '';
+                document.querySelector('.entry-textarea').value = '';
+            }
+        }
+        
+        function deleteEntry() {
+            if (confirm('Are you sure you want to delete this entry? This cannot be undone.')) {
+                alert('🗑️ Entry deleted successfully!');
+            }
+        }
+    </script>
+</body>
+</html>
