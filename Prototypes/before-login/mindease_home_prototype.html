@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindEase - Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #2C3E50;
+            background: #F5E6D3;
+        }
+        
+        /* Navigation */
+        .navbar {
+            background: white;
+            padding: 20px 60px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: #4A9B9B;
+            cursor: pointer;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: #2C3E50;
+            font-weight: 500;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+        
+        .nav-link:hover {
+            color: #4A9B9B;
+        }
+        
+        .btn-nav {
+            background: #4A9B9B;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+        }
+        
+        .btn-nav:hover {
+            background: #3D8282;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 155, 155, 0.3);
+        }
+        
+        /* Hero Section */
+        .hero {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 100px 60px;
+            text-align: center;
+        }
+        
+        .hero-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 56px;
+            font-weight: 600;
+            color: #2C3E50;
+            margin-bottom: 24px;
+            line-height: 1.2;
+        }
+        
+        .hero-subtitle {
+            font-size: 20px;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            line-height: 1.8;
+        }
+        
+        .cta-button {
+            background: #4A9B9B;
+            color: white;
+            padding: 18px 48px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .cta-button:hover {
+            background: #3D8282;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(74, 155, 155, 0.3);
+        }
+        
+        /* Features Section */
+        .features {
+            background: white;
+            padding: 80px 60px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 42px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 60px;
+            color: #2C3E50;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+        }
+        
+        .feature-card {
+            background: #F5E6D3;
+            border-radius: 12px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+        
+        .feature-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        
+        .feature-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2C3E50;
+        }
+        
+        .feature-description {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        /* How It Works */
+        .how-it-works {
+            background: #F5E6D3;
+            padding: 80px 60px;
+        }
+        
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .step {
+            background: white;
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: #4A9B9B;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-weight: 600;
+            font-size: 28px;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .step-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .step-description {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* Trust Section */
+        .trust-section {
+            background: white;
+            padding: 80px 60px;
+        }
+        
+        .trust-items {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 40px;
+            gap: 40px;
+        }
+        
+        .trust-item {
+            flex: 1;
+            text-align: center;
+            padding: 30px;
+            background: #F5E6D3;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        
+        .trust-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .trust-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+        
+        .trust-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+        
+        .trust-description {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #2C3E50;
+            color: white;
+            padding: 60px 60px 30px;
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 60px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-section h3 {
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 20px;
+            color: #4A9B9B;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            color: #ECF0F1;
+            text-decoration: none;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+        
+        .footer-links a:hover {
+            color: #4A9B9B;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #ECF0F1;
+            color: #ECF0F1;
+        }
+        
+        @media (max-width: 768px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .steps {
+                grid-template-columns: 1fr;
+            }
+            
+            .trust-items {
+                flex-direction: column;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='mindease_home_prototype.html'">MindEase</div>
+            <div class="nav-links">
+                <a href="mindease_home_prototype.html" class="nav-link">Home</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#about" class="nav-link">About</a>
+                <button class="btn-nav" onclick="window.location.href='mindease_login_prototype.html'">Login</button>
+                <button class="btn-nav" onclick="window.location.href='mindease_login_prototype.html'">Get Started</button>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1 class="hero-title">Your Mental Wellness Journey Starts Here</h1>
+        <p class="hero-subtitle">
+            Accessible AI-assisted mental health support through therapy chatbot, journaling, and daily personalized tips. A safe, private space for your well-being.
+        </p>
+        <button class="cta-button" onclick="window.location.href='mindease_login_prototype.html'">Start Your Free Journey →</button>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">How MindEase Helps You</h2>
+            
+            <div class="feature-grid">
+                <div class="feature-card" onclick="showFeatureInfo('chatbot')">
+                    <div class="feature-icon">💬</div>
+                    <h3 class="feature-title">AI Therapy Chatbot</h3>
+                    <p class="feature-description">
+                        Chat with our supportive AI therapist anytime. Get immediate, empathetic responses to your thoughts and feelings.
+                    </p>
+                </div>
+                
+                <div class="feature-card" onclick="showFeatureInfo('journal')">
+                    <div class="feature-icon">📔</div>
+                    <h3 class="feature-title">Private Journaling</h3>
+                    <p class="feature-description">
+                        Write and store your thoughts securely. Express yourself freely in a safe, private space with AI insights.
+                    </p>
+                </div>
+                
+                <div class="feature-card" onclick="showFeatureInfo('tips')">
+                    <div class="feature-icon">💡</div>
+                    <h3 class="feature-title">Daily Wellness Tips</h3>
+                    <p class="feature-description">
+                        Receive personalized tips, reminders, and exercises to improve your mental health every day.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3 class="feature-title">Complete Privacy</h3>
+                    <p class="feature-description">
+                        Your data is yours. We prioritize your privacy with secure storage and no unauthorized access.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Mood Tracking</h3>
+                    <p class="feature-description">
+                        Monitor your emotional patterns over time with visual insights and progress tracking.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🌟</div>
+                    <h3 class="feature-title">Free Access</h3>
+                    <p class="feature-description">
+                        No subscriptions, no hidden fees. Mental health support should be accessible to everyone.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- How It Works -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">Getting Started is Simple</h2>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Create Account</h3>
+                    <p class="step-description">Quick sign up with just your email</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">Choose Your Tool</h3>
+                    <p class="step-description">Chat, journal, or explore tips</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Express Yourself</h3>
+                    <p class="step-description">Share thoughts in a safe space</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title">Track Progress</h3>
+                    <p class="step-description">Monitor your wellness journey</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Trust Section -->
+    <section class="trust-section" id="about">
+        <div class="container">
+            <h2 class="section-title">Why Choose MindEase?</h2>
+            
+            <div class="trust-items">
+                <div class="trust-item">
+                    <div class="trust-icon">🔐</div>
+                    <h3 class="trust-title">100% Private</h3>
+                    <p class="trust-description">
+                        Your conversations and journals are encrypted and secure. We never share your data.
+                    </p>
+                </div>
+                
+                <div class="trust-item">
+                    <div class="trust-icon">⚡</div>
+                    <h3 class="trust-title">Available 24/7</h3>
+                    <p class="trust-description">
+                        Get support whenever you need it, day or night. No appointments necessary.
+                    </p>
+                </div>
+                
+                <div class="trust-item">
+                    <div class="trust-icon">❤️</div>
+                    <h3 class="trust-title">Judgment-Free</h3>
+                    <p class="trust-description">
+                        A safe space to be yourself without fear or stigma. Express freely.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About MindEase</h3>
+                <p style="color: #ECF0F1; line-height: 1.8;">
+                    Making mental health support accessible, affordable, and private for everyone who needs it.
+                </p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a>Privacy Policy</a></li>
+                    <li><a>Terms of Service</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <ul class="footer-links">
+                    <li><a>Mental Health Tips</a></li>
+                    <li><a>Crisis Helplines</a></li>
+                    <li><a>FAQs</a></li>
+                    <li><a>Contact Us</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            © 2025 MindEase. All rights reserved. | Built with care for your well-being.
+        </div>
+    </footer>
+    
+    <script>
+        function showFeatureInfo(feature) {
+            const messages = {
+                chatbot: 'Experience our AI Therapy Chatbot! Click "Get Started" to try it.',
+                journal: 'Start journaling today! Create an account to begin.',
+                tips: 'Get daily wellness tips on your dashboard after signing up!'
+            };
+            
+            if (messages[feature]) {
+                if (confirm(messages[feature] + '\n\nWould you like to sign up now?')) {
+                    window.location.href = 'mindease_login_prototype.html';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
