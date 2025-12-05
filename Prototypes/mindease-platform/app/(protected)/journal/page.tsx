@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Navbar from '@/components/Navbar';
 import { Edit3, Trash2, Save, Plus, Search, Filter, Sparkles, Calendar, MoreHorizontal } from 'lucide-react';
+import { useToast } from '@/context/ToastContext';
 
 interface JournalEntry {
     _id: string;
@@ -43,6 +43,8 @@ export default function JournalPage() {
         }
     };
 
+    const { showToast } = useToast();
+
     const handleSave = async () => {
         if (!formData.content) return;
         setLoading(true);
@@ -59,12 +61,13 @@ export default function JournalPage() {
 
             if (res.ok) {
                 await fetchEntries();
-                alert('✅ Journal entry saved successfully!');
+                showToast('Journal entry saved successfully!', 'success');
                 // Reset form
                 setFormData({ title: '', content: '', mood: '😐' });
             }
         } catch (error) {
             console.error('Failed to save journal', error);
+            showToast('Failed to save journal entry.', 'error');
         } finally {
             setLoading(false);
         }
@@ -87,10 +90,8 @@ export default function JournalPage() {
     };
 
     return (
-        <div className="min-h-screen bg-background flex flex-col">
-            <Navbar />
-
-            <div className="flex-1 max-w-[1400px] mx-auto w-full p-6 flex flex-col lg:flex-row gap-8 h-[calc(100vh-80px)] pt-24">
+        <div className="flex flex-col h-[calc(100vh-140px)]">
+            <div className="flex-1 flex flex-col lg:flex-row gap-8 h-full">
 
                 {/* Editor Section */}
                 <div className="flex-[1.5] glass rounded-[2.5rem] shadow-xl flex flex-col overflow-hidden relative">
@@ -207,8 +208,8 @@ export default function JournalPage() {
                                 key={entry._id}
                                 onClick={() => handleSelectEntry(entry)}
                                 className={`p-5 rounded-2xl cursor-pointer transition-all duration-300 border hover:-translate-y-1 hover:shadow-md ${selectedEntry?._id === entry._id
-                                        ? 'bg-white border-primary shadow-lg shadow-primary/5 ring-1 ring-primary'
-                                        : 'bg-white/60 border-transparent hover:bg-white'
+                                    ? 'bg-white border-primary shadow-lg shadow-primary/5 ring-1 ring-primary'
+                                    : 'bg-white/60 border-transparent hover:bg-white'
                                     } animate-slide-up`}
                                 style={{ animationDelay: `${i * 0.05}s` }}
                             >

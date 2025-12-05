@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import Navbar from '@/components/Navbar';
 import { Send, User, Bot, MoreVertical, Phone, MessageCircle, FileText, Heart, Zap, Sparkles } from 'lucide-react';
+import { useToast } from '@/context/ToastContext';
 
 interface Message {
     id: string;
@@ -36,6 +36,8 @@ export default function ChatPage() {
         setMessages((prev) => [...prev, newMessage]);
     };
 
+    const { showToast } = useToast();
+
     const handleSendMessage = async (text: string) => {
         if (!text.trim()) return;
 
@@ -53,7 +55,7 @@ export default function ChatPage() {
             const data = await res.json();
             addMessage(data.reply, 'ai');
         } catch (error) {
-            addMessage("I'm having trouble connecting right now. Please try again.", 'ai');
+            showToast("I'm having trouble connecting right now. Please try again.", 'error');
         } finally {
             setLoading(false);
         }
@@ -70,10 +72,8 @@ export default function ChatPage() {
     };
 
     return (
-        <div className="min-h-screen bg-background flex flex-col">
-            <Navbar />
-
-            <div className="flex-1 max-w-[1400px] mx-auto w-full p-6 flex gap-6 h-[calc(100vh-80px)] pt-24">
+        <div className="flex flex-col h-[calc(100vh-140px)]">
+            <div className="flex-1 flex gap-6 h-full">
                 {/* Main Chat Area */}
                 <div className="flex-1 glass rounded-[2.5rem] shadow-xl flex flex-col overflow-hidden relative">
                     {/* Decorative Background */}
@@ -144,8 +144,8 @@ export default function ChatPage() {
                                             {msg.sender === 'ai' ? <Bot size={20} /> : <User size={20} />}
                                         </div>
                                         <div className={`max-w-[75%] p-6 rounded-3xl shadow-sm leading-relaxed text-lg ${msg.sender === 'ai'
-                                                ? 'bg-white/80 backdrop-blur-sm text-secondary rounded-tl-none border border-white/40'
-                                                : 'bg-primary text-white rounded-tr-none shadow-primary/20'
+                                            ? 'bg-white/80 backdrop-blur-sm text-secondary rounded-tl-none border border-white/40'
+                                            : 'bg-primary text-white rounded-tr-none shadow-primary/20'
                                             }`}>
                                             <p>{msg.text}</p>
                                             <span className={`text-xs mt-3 block opacity-60 font-medium`}>

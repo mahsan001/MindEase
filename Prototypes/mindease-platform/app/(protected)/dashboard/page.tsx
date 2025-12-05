@@ -1,7 +1,45 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Lightbulb, Edit3, MessageSquare, BarChart2, Target, ArrowUpRight, Calendar } from 'lucide-react';
+import { useToast } from '@/context/ToastContext';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
+    const [stats, setStats] = useState({
+        journalCount: 0,
+        moodStreak: 0,
+        mindfulMinutes: 0
+    });
+    const [loading, setLoading] = useState(true);
+    const { showToast } = useToast();
+    const router = useRouter();
+
+    useEffect(() => {
+        fetchDashboardData();
+    }, []);
+
+    const fetchDashboardData = async () => {
+        try {
+            const res = await fetch('/api/dashboard');
+            if (res.status === 401) {
+                showToast('Session expired. Please log in again.', 'error');
+                router.push('/login');
+                return;
+            }
+            const data = await res.json();
+            if (data.stats) {
+                setStats(data.stats);
+            }
+        } catch (error) {
+            console.error('Failed to fetch dashboard data', error);
+            showToast('Failed to load dashboard data.', 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="space-y-8 animate-fade-in pb-8">
             {/* Header */}
@@ -42,9 +80,9 @@ export default function DashboardPage() {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {[
-                    { label: 'Journal Entries', value: '24', icon: Edit3, color: 'text-primary', bg: 'bg-primary/10' },
-                    { label: 'Mindful Minutes', value: '120', icon: Target, color: 'text-secondary', bg: 'bg-secondary/10' },
-                    { label: 'Mood Streak', value: '5 Days', icon: BarChart2, color: 'text-accent', bg: 'bg-accent/10' },
+                    { label: 'Journal Entries', value: loading ? '...' : stats.journalCount.toString(), icon: Edit3, color: 'text-primary', bg: 'bg-primary/10' },
+                    { label: 'Mindful Minutes', value: loading ? '...' : stats.mindfulMinutes.toString(), icon: Target, color: 'text-secondary', bg: 'bg-secondary/10' },
+                    { label: 'Mood Streak', value: loading ? '...' : `${stats.moodStreak} Days`, icon: BarChart2, color: 'text-accent', bg: 'bg-accent/10' },
                 ].map((stat, i) => (
                     <div key={i} className="glass-card p-6 rounded-3xl flex items-center gap-5 group">
                         <div className={`w-16 h-16 rounded-2xl ${stat.bg} ${stat.color} flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300`}>
