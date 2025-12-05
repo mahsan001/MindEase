@@ -1,17 +1,23 @@
 import type { Metadata } from "next";
-import { Inter, Poppins } from "next/font/google";
+import { Fraunces, Outfit } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const poppins = Poppins({
-  weight: ['400', '500', '600'],
+const outfit = Outfit({
   subsets: ["latin"],
-  variable: "--font-poppins"
+  variable: "--font-outfit",
+  display: "swap",
+});
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-fraunces",
+  display: "swap",
+  axes: ["SOFT", "WONK", "opsz"], // Enable soft and wonky axes for character
 });
 
 export const metadata: Metadata = {
-  title: "MindEase - Your Mental Wellness Journey",
-  description: "AI-assisted mental health support through therapy chatbot, journaling, and daily personalized tips.",
+  title: "MindEase | Find Your Balance",
+  description: "A sanctuary for your mind. AI-assisted therapy, mindful journaling, and daily wellness.",
 };
 
 export default function RootLayout({
@@ -21,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${poppins.variable} font-sans antialiased`}>
+      <body className={`${outfit.variable} ${fraunces.variable} font-sans antialiased bg-background text-foreground selection:bg-primary/30`}>
         {children}
       </body>
     </html>

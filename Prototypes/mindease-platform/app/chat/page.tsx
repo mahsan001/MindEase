@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
-import { Send, User, Bot, MoreVertical, Phone, MessageCircle, FileText, Heart, Zap } from 'lucide-react';
+import { Send, User, Bot, MoreVertical, Phone, MessageCircle, FileText, Heart, Zap, Sparkles } from 'lucide-react';
 
 interface Message {
     id: string;
@@ -73,27 +73,33 @@ export default function ChatPage() {
         <div className="min-h-screen bg-background flex flex-col">
             <Navbar />
 
-            <div className="flex-1 max-w-[1400px] mx-auto w-full p-6 flex gap-6 h-[calc(100vh-80px)]">
+            <div className="flex-1 max-w-[1400px] mx-auto w-full p-6 flex gap-6 h-[calc(100vh-80px)] pt-24">
                 {/* Main Chat Area */}
-                <div className="flex-1 bg-white rounded-2xl shadow-sm flex flex-col overflow-hidden">
+                <div className="flex-1 glass rounded-[2.5rem] shadow-xl flex flex-col overflow-hidden relative">
+                    {/* Decorative Background */}
+                    <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 opacity-30 pointer-events-none">
+                        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float"></div>
+                        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
+                    </div>
+
                     {/* Chat Header */}
-                    <div className="bg-gradient-to-r from-primary to-primary-hover p-6 flex justify-between items-center text-white">
+                    <div className="bg-white/40 backdrop-blur-md p-6 flex justify-between items-center border-b border-white/20">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-white text-primary rounded-full flex items-center justify-center text-2xl shadow-sm">
+                            <div className="w-14 h-14 bg-gradient-to-br from-secondary to-secondary-hover text-white rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-secondary/20">
                                 <Bot size={28} />
                             </div>
                             <div>
-                                <h3 className="font-heading font-semibold text-lg">MindEase AI Therapist</h3>
-                                <div className="flex items-center gap-2 text-sm opacity-90">
-                                    <span className="w-2 h-2 bg-green-300 rounded-full animate-pulse"></span>
-                                    Online - Always here to listen
+                                <h3 className="font-heading font-bold text-xl text-secondary">MindEase AI</h3>
+                                <div className="flex items-center gap-2 text-sm text-foreground/60">
+                                    <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.5)]"></span>
+                                    Online & Listening
                                 </div>
                             </div>
                         </div>
                         <div className="flex gap-3">
                             <button
                                 onClick={() => { setMessages([]); setShowStarters(true); }}
-                                className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors backdrop-blur-sm"
+                                className="px-4 py-2 bg-white/50 hover:bg-white/80 rounded-xl text-sm font-medium transition-all text-secondary border border-white/40"
                             >
                                 New Chat
                             </button>
@@ -101,55 +107,62 @@ export default function ChatPage() {
                     </div>
 
                     {/* Messages Area */}
-                    <div className="flex-1 overflow-y-auto p-6 bg-[#F5E6D3]/30">
+                    <div className="flex-1 overflow-y-auto p-8 scroll-smooth">
                         {showStarters ? (
-                            <div className="h-full flex flex-col items-center justify-center text-center max-w-2xl mx-auto">
-                                <h2 className="font-heading text-2xl font-semibold text-secondary mb-8">How can I support you today?</h2>
+                            <div className="h-full flex flex-col items-center justify-center text-center max-w-2xl mx-auto animate-fade-in">
+                                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6 text-primary animate-scale-in">
+                                    <Sparkles size={40} />
+                                </div>
+                                <h2 className="font-heading text-3xl md:text-4xl font-bold text-secondary mb-4">How can I support you today?</h2>
+                                <p className="text-foreground/60 mb-10 text-lg">Select a topic to start a conversation or type your own.</p>
+
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                                    <button onClick={() => startConversation('anxious')} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all text-left group">
-                                        <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">😟</div>
-                                        <div className="font-medium text-secondary">I'm feeling anxious</div>
-                                    </button>
-                                    <button onClick={() => startConversation('down')} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all text-left group">
-                                        <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">😔</div>
-                                        <div className="font-medium text-secondary">I'm feeling down</div>
-                                    </button>
-                                    <button onClick={() => startConversation('stressed')} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all text-left group">
-                                        <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">😤</div>
-                                        <div className="font-medium text-secondary">I'm stressed about work</div>
-                                    </button>
-                                    <button onClick={() => startConversation('talk')} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all text-left group">
-                                        <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">💭</div>
-                                        <div className="font-medium text-secondary">Just need to talk</div>
-                                    </button>
+                                    {[
+                                        { id: 'anxious', icon: '😟', label: "I'm feeling anxious" },
+                                        { id: 'down', icon: '😔', label: "I'm feeling down" },
+                                        { id: 'stressed', icon: '😤', label: "Stressed about work" },
+                                        { id: 'talk', icon: '💭', label: "Just need to talk" },
+                                    ].map((item, i) => (
+                                        <button
+                                            key={item.id}
+                                            onClick={() => startConversation(item.id)}
+                                            className="bg-white/60 backdrop-blur-sm p-6 rounded-2xl border border-white/40 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all text-left group animate-slide-up"
+                                            style={{ animationDelay: `${i * 0.1}s` }}
+                                        >
+                                            <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
+                                            <div className="font-bold text-secondary text-lg">{item.label}</div>
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
                         ) : (
-                            <div className="space-y-6">
+                            <div className="space-y-8">
                                 {messages.map((msg) => (
-                                    <div key={msg.id} className={`flex gap-4 ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}>
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm ${msg.sender === 'ai' ? 'bg-primary text-white' : 'bg-[#8B7AA8] text-white'
+                                    <div key={msg.id} className={`flex gap-4 animate-slide-up ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}>
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm ${msg.sender === 'ai' ? 'bg-secondary text-white' : 'bg-primary text-white'
                                             }`}>
                                             {msg.sender === 'ai' ? <Bot size={20} /> : <User size={20} />}
                                         </div>
-                                        <div className={`max-w-[70%] p-4 rounded-2xl shadow-sm ${msg.sender === 'ai' ? 'bg-white text-secondary' : 'bg-[#8B7AA8] text-white'
+                                        <div className={`max-w-[75%] p-6 rounded-3xl shadow-sm leading-relaxed text-lg ${msg.sender === 'ai'
+                                                ? 'bg-white/80 backdrop-blur-sm text-secondary rounded-tl-none border border-white/40'
+                                                : 'bg-primary text-white rounded-tr-none shadow-primary/20'
                                             }`}>
-                                            <p className="leading-relaxed">{msg.text}</p>
-                                            <span className={`text-xs mt-2 block ${msg.sender === 'ai' ? 'text-gray-400' : 'text-white/70'}`}>
+                                            <p>{msg.text}</p>
+                                            <span className={`text-xs mt-3 block opacity-60 font-medium`}>
                                                 {msg.time}
                                             </span>
                                         </div>
                                     </div>
                                 ))}
                                 {loading && (
-                                    <div className="flex gap-4">
-                                        <div className="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
+                                    <div className="flex gap-4 animate-fade-in">
+                                        <div className="w-10 h-10 bg-secondary text-white rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
                                             <Bot size={20} />
                                         </div>
-                                        <div className="bg-white p-4 rounded-2xl shadow-sm flex items-center gap-2">
-                                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
-                                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></span>
-                                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></span>
+                                        <div className="bg-white/80 backdrop-blur-sm p-5 rounded-3xl rounded-tl-none shadow-sm flex items-center gap-2 border border-white/40">
+                                            <span className="w-2 h-2 bg-secondary/40 rounded-full animate-bounce"></span>
+                                            <span className="w-2 h-2 bg-secondary/40 rounded-full animate-bounce delay-100"></span>
+                                            <span className="w-2 h-2 bg-secondary/40 rounded-full animate-bounce delay-200"></span>
                                         </div>
                                     </div>
                                 )}
@@ -159,80 +172,62 @@ export default function ChatPage() {
                     </div>
 
                     {/* Input Area */}
-                    <div className="p-6 bg-white border-t border-gray-100">
-                        <div className="flex gap-4">
+                    <div className="p-6 bg-white/40 backdrop-blur-md border-t border-white/20">
+                        <div className="flex gap-4 bg-white rounded-2xl p-2 shadow-sm border border-gray-100 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
                             <input
                                 type="text"
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleSendMessage(input)}
-                                placeholder="Type your message here... Share whatever's on your mind"
-                                className="flex-1 border-2 border-gray-100 rounded-xl px-4 py-3 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
+                                placeholder="Type your message here..."
+                                className="flex-1 bg-transparent px-4 py-3 focus:outline-none text-lg placeholder:text-gray-400"
                             />
                             <button
                                 onClick={() => handleSendMessage(input)}
                                 disabled={!input.trim() || loading}
-                                className="bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                className="bg-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-primary-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg shadow-primary/20"
                             >
                                 Send <Send size={18} />
                             </button>
                         </div>
-                        <p className="text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-1">
-                            <span className="text-primary">🔒</span> Your conversation is private and secure. MindEase AI is not a replacement for professional therapy.
+                        <p className="text-center text-xs text-gray-500 mt-4 flex items-center justify-center gap-1 font-medium">
+                            <span className="text-primary">🔒</span> Private & Secure • Not a replacement for professional therapy
                         </p>
                     </div>
                 </div>
 
                 {/* Right Sidebar */}
-                <div className="w-80 hidden lg:block space-y-6 overflow-y-auto">
+                <div className="w-80 hidden lg:flex flex-col gap-6">
                     {/* Quick Tips */}
-                    <div className="bg-white rounded-xl p-6 shadow-sm">
-                        <h4 className="font-heading font-semibold text-lg mb-4 flex items-center gap-2">
-                            <Zap size={20} className="text-yellow-500" /> Quick Tips
+                    <div className="glass-card p-6 rounded-3xl">
+                        <h4 className="font-heading font-bold text-lg mb-4 flex items-center gap-2 text-secondary">
+                            <Zap size={20} className="text-accent" /> Quick Tips
                         </h4>
                         <div className="space-y-3">
-                            <div className="bg-background p-4 rounded-lg">
-                                <strong className="block text-secondary mb-1">Be Open & Honest</strong>
-                                <p className="text-sm text-gray-600">Share your true feelings. This is a judgment-free space.</p>
+                            <div className="bg-white/50 p-4 rounded-2xl border border-white/40">
+                                <strong className="block text-secondary mb-1 font-bold">Be Open & Honest</strong>
+                                <p className="text-sm text-foreground/70">Share your true feelings. This is a judgment-free space.</p>
                             </div>
-                            <div className="bg-background p-4 rounded-lg">
-                                <strong className="block text-secondary mb-1">Take Your Time</strong>
-                                <p className="text-sm text-gray-600">There's no rush. Respond when you're ready.</p>
+                            <div className="bg-white/50 p-4 rounded-2xl border border-white/40">
+                                <strong className="block text-secondary mb-1 font-bold">Take Your Time</strong>
+                                <p className="text-sm text-foreground/70">There's no rush. Respond when you're ready.</p>
                             </div>
-                        </div>
-                    </div>
-
-                    {/* Wellness Exercises */}
-                    <div className="bg-white rounded-xl p-6 shadow-sm">
-                        <h4 className="font-heading font-semibold text-lg mb-4 flex items-center gap-2">
-                            <Heart size={20} className="text-pink-500" /> Try These
-                        </h4>
-                        <div className="space-y-2">
-                            <button className="w-full flex items-center gap-3 p-3 hover:bg-background rounded-lg transition-colors text-left text-gray-600 hover:text-primary">
-                                <span className="text-xl">🫁</span> 5-Minute Breathing
-                            </button>
-                            <button className="w-full flex items-center gap-3 p-3 hover:bg-background rounded-lg transition-colors text-left text-gray-600 hover:text-primary">
-                                <span className="text-xl">📝</span> Thought Journaling
-                            </button>
-                            <button className="w-full flex items-center gap-3 p-3 hover:bg-background rounded-lg transition-colors text-left text-gray-600 hover:text-primary">
-                                <span className="text-xl">🎯</span> Grounding Techniques
-                            </button>
                         </div>
                     </div>
 
                     {/* Crisis Resources */}
-                    <div className="bg-gradient-to-br from-[#8B7AA8] to-[#75679A] rounded-xl p-6 text-white shadow-sm text-center">
-                        <h4 className="font-heading font-semibold text-lg mb-4">🆘 Need Immediate Help?</h4>
-                        <div className="space-y-4 text-sm opacity-95">
+                    <div className="bg-gradient-to-br from-secondary to-secondary-hover rounded-3xl p-6 text-white shadow-xl shadow-secondary/20 text-center relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+                        <h4 className="font-heading font-bold text-lg mb-4 relative z-10">🆘 Need Immediate Help?</h4>
+                        <div className="space-y-4 text-sm opacity-95 relative z-10">
                             <div>
-                                <strong className="block mb-1">Crisis Helpline:</strong>
-                                <div className="font-mono bg-white/10 py-1 rounded">1-800-273-8255</div>
+                                <strong className="block mb-1 opacity-80">Crisis Helpline:</strong>
+                                <div className="font-mono bg-white/10 py-2 rounded-xl border border-white/10 text-lg tracking-wider">1-800-273-8255</div>
                             </div>
                             <div>
-                                <strong className="block mb-1">Text Support:</strong>
-                                <div className="font-mono bg-white/10 py-1 rounded">Text "HELLO" to 741741</div>
+                                <strong className="block mb-1 opacity-80">Text Support:</strong>
+                                <div className="font-mono bg-white/10 py-2 rounded-xl border border-white/10 text-lg tracking-wider">Text "HELLO" to 741741</div>
                             </div>
-                            <p className="text-xs mt-4 opacity-80">Available 24/7 for emergencies</p>
                         </div>
                     </div>
                 </div>

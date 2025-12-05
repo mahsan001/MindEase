@@ -1,14 +1,126 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
-  --foreground-rgb: 44, 62, 80;
-  --background-start-rgb: 245, 230, 211;
-  --background-end-rgb: 245, 230, 211;
+@theme {
+  /* Color Palette - Warm Modernism */
+  --color-background: #FDFCF8;
+  /* Warm off-white/cream */
+  --color-foreground: #2D3142;
+  /* Deep slate blue-grey */
+
+  --color-primary: #D65A31;
+  /* Burnt Sienna / Clay */
+  --color-primary-hover: #BF4B26;
+  --color-primary-light: #FDECE8;
+
+  --color-secondary: #0F4C5C;
+  /* Deep Teal */
+  --color-secondary-hover: #0A3844;
+
+  --color-accent: #E3B505;
+  /* Muted Mustard/Gold */
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F2F0E9;
+  /* Slightly darker warm grey */
+
+  --color-success: #5F9EA0;
+  /* Cadet Blue */
+  --color-error: #D9534F;
+
+  /* Typography */
+  --font-sans: var(--font-outfit), system-ui, sans-serif;
+  --font-heading: var(--font-fraunces), serif;
+
+  /* Animation */
+  --animate-fade-in: fadeIn 0.6s ease-out forwards;
+  --animate-slide-up: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-scale-in: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-float: float 6s ease-in-out infinite;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
+  }
 }
 
+/* Base Styles */
 body {
-  color: rgb(var(--foreground-rgb));
-  background: #F5E6D3;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+/* Custom Utilities */
+@layer utilities {
+  .glass {
+    @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-sm;
+  }
+
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-md border border-white/50 shadow-sm hover:shadow-md transition-all duration-300;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .mask-gradient {
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-secondary/20 rounded-full hover:bg-secondary/40 transition-colors;
 }

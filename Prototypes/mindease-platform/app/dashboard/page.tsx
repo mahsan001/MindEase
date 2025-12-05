@@ -1,91 +1,98 @@
 import Link from 'next/link';
-import { Lightbulb, Edit3, MessageSquare, BarChart2, Target } from 'lucide-react';
+import { Lightbulb, Edit3, MessageSquare, BarChart2, Target, ArrowUpRight, Calendar } from 'lucide-react';
 
 export default function DashboardPage() {
     return (
-        <div className="space-y-8">
-            {/* Welcome Section */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm">
-                <h1 className="font-heading text-3xl font-semibold text-secondary mb-2">Welcome back, User</h1>
-                <p className="text-lg text-gray-600">How are you feeling today? Let's continue your wellness journey.</p>
+        <div className="space-y-8 animate-fade-in pb-8">
+            {/* Header */}
+            <div className="flex justify-between items-end">
+                <div>
+                    <h1 className="font-heading text-4xl font-bold text-secondary mb-2">Good Morning, User</h1>
+                    <p className="text-lg text-foreground/60">Ready to find your balance today?</p>
+                </div>
+                <div className="hidden md:flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-100 text-sm font-medium text-secondary">
+                    <Calendar size={16} className="text-primary" />
+                    {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                </div>
             </div>
 
-            {/* Daily Tip */}
-            <div className="bg-gradient-to-br from-primary to-primary-hover rounded-2xl p-8 text-white shadow-lg">
-                <div className="flex items-center gap-3 mb-4">
-                    <Lightbulb size={28} />
-                    <h2 className="font-heading text-2xl font-semibold">Daily Wellness Tip</h2>
-                </div>
-                <div className="bg-white/10 rounded-xl p-6 backdrop-blur-sm">
-                    <strong className="block text-xl mb-2">Practice Gratitude Today</strong>
-                    <p className="leading-relaxed opacity-95">
-                        Take a moment to write down three things you're grateful for. Research shows that regular gratitude practice can significantly improve mental well-being and reduce stress. Start small - it could be as simple as a warm cup of coffee or a kind message from a friend.
-                    </p>
+            {/* Daily Tip - Hero Card */}
+            <div className="relative overflow-hidden rounded-[2.5rem] bg-secondary text-white p-8 md:p-12 shadow-xl shadow-secondary/20 group">
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 group-hover:bg-primary/30 transition-colors duration-700"></div>
+                <div className="relative z-10 flex flex-col md:flex-row gap-8 items-start md:items-center justify-between">
+                    <div className="space-y-4 max-w-2xl">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-xs font-bold uppercase tracking-wider">
+                            <Lightbulb size={14} className="text-accent" />
+                            Daily Wisdom
+                        </div>
+                        <h2 className="font-heading text-3xl md:text-4xl font-bold leading-tight">
+                            "The only way out is through."
+                        </h2>
+                        <p className="text-white/80 text-lg leading-relaxed">
+                            Today, try to face one small challenge you've been avoiding. Acknowledge the discomfort, breathe through it, and take a single step forward.
+                        </p>
+                    </div>
+                    <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/10 w-full md:w-auto min-w-[200px]">
+                        <div className="text-sm text-white/60 mb-1">Focus for today</div>
+                        <div className="text-xl font-heading font-bold">Courage</div>
+                    </div>
                 </div>
             </div>
 
             {/* Stats Grid */}
-            <div>
-                <h2 className="font-heading text-xl font-semibold text-secondary mb-4">Your Progress</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="bg-white p-6 rounded-xl shadow-sm text-center hover:-translate-y-1 transition-transform">
-                        <div className="font-heading text-4xl font-semibold text-primary mb-2">24</div>
-                        <div className="text-gray-600 font-medium">Journal Entries</div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {[
+                    { label: 'Journal Entries', value: '24', icon: Edit3, color: 'text-primary', bg: 'bg-primary/10' },
+                    { label: 'Mindful Minutes', value: '120', icon: Target, color: 'text-secondary', bg: 'bg-secondary/10' },
+                    { label: 'Mood Streak', value: '5 Days', icon: BarChart2, color: 'text-accent', bg: 'bg-accent/10' },
+                ].map((stat, i) => (
+                    <div key={i} className="glass-card p-6 rounded-3xl flex items-center gap-5 group">
+                        <div className={`w-16 h-16 rounded-2xl ${stat.bg} ${stat.color} flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300`}>
+                            <stat.icon size={32} />
+                        </div>
+                        <div>
+                            <div className={`font-heading text-4xl font-bold ${stat.color} mb-1`}>{stat.value}</div>
+                            <div className="text-foreground/60 font-medium">{stat.label}</div>
+                        </div>
                     </div>
-                    <div className="bg-white p-6 rounded-xl shadow-sm text-center hover:-translate-y-1 transition-transform">
-                        <div className="font-heading text-4xl font-semibold text-primary mb-2">15</div>
-                        <div className="text-gray-600 font-medium">Days Active</div>
-                    </div>
-                    <div className="bg-white p-6 rounded-xl shadow-sm text-center hover:-translate-y-1 transition-transform">
-                        <div className="font-heading text-4xl font-semibold text-primary mb-2">38</div>
-                        <div className="text-gray-600 font-medium">AI Conversations</div>
-                    </div>
-                </div>
+                ))}
             </div>
 
             {/* Quick Actions */}
             <div>
-                <h2 className="font-heading text-xl font-semibold text-secondary mb-4">Quick Actions</h2>
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="font-heading text-2xl font-bold text-secondary">Quick Actions</h2>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Link href="/journal" className="bg-white p-6 rounded-xl shadow-sm flex items-center gap-5 hover:-translate-y-1 hover:bg-background transition-all group cursor-pointer">
-                        <div className="w-14 h-14 bg-background rounded-xl flex items-center justify-center text-secondary group-hover:bg-primary group-hover:text-white transition-colors">
-                            <Edit3 size={24} />
-                        </div>
-                        <div>
-                            <div className="font-heading font-semibold text-lg text-secondary mb-1">Write New Journal</div>
-                            <div className="text-sm text-gray-600">Express your thoughts today</div>
-                        </div>
-                    </Link>
-
-                    <Link href="/chat" className="bg-white p-6 rounded-xl shadow-sm flex items-center gap-5 hover:-translate-y-1 hover:bg-background transition-all group cursor-pointer">
-                        <div className="w-14 h-14 bg-background rounded-xl flex items-center justify-center text-secondary group-hover:bg-primary group-hover:text-white transition-colors">
-                            <MessageSquare size={24} />
-                        </div>
-                        <div>
-                            <div className="font-heading font-semibold text-lg text-secondary mb-1">Chat with AI</div>
-                            <div className="text-sm text-gray-600">Start a conversation</div>
+                    <Link href="/journal" className="group bg-white p-1 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
+                        <div className="bg-surface-alt rounded-[1.7rem] p-6 h-full transition-colors group-hover:bg-primary/5">
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm group-hover:scale-110 transition-transform duration-300">
+                                    <Edit3 size={24} />
+                                </div>
+                                <div className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-all duration-300">
+                                    <ArrowUpRight size={20} />
+                                </div>
+                            </div>
+                            <h3 className="font-heading text-xl font-bold text-secondary mb-2">Write Journal</h3>
+                            <p className="text-foreground/60 text-sm">Reflect on your day and clear your mind.</p>
                         </div>
                     </Link>
 
-                    <div className="bg-white p-6 rounded-xl shadow-sm flex items-center gap-5 hover:-translate-y-1 hover:bg-background transition-all group cursor-pointer">
-                        <div className="w-14 h-14 bg-background rounded-xl flex items-center justify-center text-secondary group-hover:bg-primary group-hover:text-white transition-colors">
-                            <BarChart2 size={24} />
+                    <Link href="/chat" className="group bg-white p-1 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
+                        <div className="bg-surface-alt rounded-[1.7rem] p-6 h-full transition-colors group-hover:bg-secondary/5">
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-secondary shadow-sm group-hover:scale-110 transition-transform duration-300">
+                                    <MessageSquare size={24} />
+                                </div>
+                                <div className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 group-hover:bg-secondary group-hover:text-white group-hover:border-secondary transition-all duration-300">
+                                    <ArrowUpRight size={20} />
+                                </div>
+                            </div>
+                            <h3 className="font-heading text-xl font-bold text-secondary mb-2">Chat with AI</h3>
+                            <p className="text-foreground/60 text-sm">Talk through your feelings in a safe space.</p>
                         </div>
-                        <div>
-                            <div className="font-heading font-semibold text-lg text-secondary mb-1">Track Your Mood</div>
-                            <div className="text-sm text-gray-600">Log how you're feeling</div>
-                        </div>
-                    </div>
-
-                    <div className="bg-white p-6 rounded-xl shadow-sm flex items-center gap-5 hover:-translate-y-1 hover:bg-background transition-all group cursor-pointer">
-                        <div className="w-14 h-14 bg-background rounded-xl flex items-center justify-center text-secondary group-hover:bg-primary group-hover:text-white transition-colors">
-                            <Target size={24} />
-                        </div>
-                        <div>
-                            <div className="font-heading font-semibold text-lg text-secondary mb-1">Set Daily Goal</div>
-                            <div className="text-sm text-gray-600">Create wellness objectives</div>
-                        </div>
-                    </div>
+                    </Link>
                 </div>
             </div>
         </div>

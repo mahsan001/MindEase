@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
-import { Edit3, Trash2, Save, Plus, Search, Filter, Sparkles } from 'lucide-react';
+import { Edit3, Trash2, Save, Plus, Search, Filter, Sparkles, Calendar, MoreHorizontal } from 'lucide-react';
 
 interface JournalEntry {
     _id: string;
@@ -90,49 +90,54 @@ export default function JournalPage() {
         <div className="min-h-screen bg-background flex flex-col">
             <Navbar />
 
-            <div className="flex-1 max-w-[1400px] mx-auto w-full p-6 flex flex-col lg:flex-row gap-6 h-[calc(100vh-80px)]">
+            <div className="flex-1 max-w-[1400px] mx-auto w-full p-6 flex flex-col lg:flex-row gap-8 h-[calc(100vh-80px)] pt-24">
 
                 {/* Editor Section */}
-                <div className="flex-[1.5] bg-white rounded-2xl shadow-sm flex flex-col overflow-hidden">
-                    <div className="bg-gradient-to-r from-primary to-primary-hover p-6 text-white">
-                        <div className="flex items-center gap-3 mb-1">
-                            <Edit3 size={24} />
-                            <h2 className="font-heading text-2xl font-semibold">Write Your Journal Entry</h2>
+                <div className="flex-[1.5] glass rounded-[2.5rem] shadow-xl flex flex-col overflow-hidden relative">
+                    {/* Decorative Background */}
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+                    <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-white/50 backdrop-blur-sm">
+                        <div>
+                            <h2 className="font-heading text-3xl font-bold text-secondary mb-1">Write Entry</h2>
+                            <p className="text-foreground/60 text-sm font-medium">Express your thoughts freely</p>
                         </div>
-                        <p className="opacity-90">Express your thoughts freely in this private space</p>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={handleSave}
+                                disabled={loading}
+                                className="bg-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-primary-hover transition-all flex items-center gap-2 disabled:opacity-70 shadow-lg shadow-primary/20"
+                            >
+                                <Save size={18} /> {loading ? 'Saving...' : 'Save'}
+                            </button>
+                            <button className="p-3 bg-white rounded-xl border border-gray-200 text-gray-400 hover:text-error hover:border-error transition-colors">
+                                <Trash2 size={20} />
+                            </button>
+                        </div>
                     </div>
 
-                    <div className="bg-[#F5E6D3] px-6 py-3 flex gap-3 border-b border-gray-200 overflow-x-auto">
-                        <button className="p-2 bg-white rounded hover:text-primary transition-colors font-bold">B</button>
-                        <button className="p-2 bg-white rounded hover:text-primary transition-colors italic">I</button>
-                        <button className="p-2 bg-white rounded hover:text-primary transition-colors underline">U</button>
-                        <div className="w-px h-8 bg-gray-300 mx-1"></div>
-                        <button className="p-2 bg-white rounded hover:text-primary transition-colors text-sm">List</button>
-                        <button className="p-2 bg-white rounded hover:text-primary transition-colors text-sm">Link</button>
-                    </div>
-
-                    <div className="flex-1 p-6 overflow-y-auto flex flex-col gap-6">
+                    <div className="flex-1 p-8 overflow-y-auto flex flex-col gap-6">
                         <input
                             type="text"
-                            placeholder="Entry Title (Optional)"
-                            className="text-2xl font-heading font-semibold border-2 border-gray-100 rounded-lg p-4 focus:outline-none focus:border-primary transition-colors"
+                            placeholder="Untitled Entry"
+                            className="text-4xl font-heading font-bold bg-transparent border-none p-0 focus:outline-none placeholder:text-gray-300 text-secondary"
                             value={formData.title}
                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                         />
 
                         <div className="flex flex-wrap gap-4 items-center">
-                            <div className="bg-[#F5E6D3] px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium">
-                                <span>📅 Date:</span>
-                                <span>{new Date().toLocaleDateString()}</span>
+                            <div className="bg-white/60 border border-white/40 px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold text-secondary shadow-sm">
+                                <Calendar size={16} className="text-primary" />
+                                <span>{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</span>
                             </div>
-                            <div className="bg-[#F5E6D3] px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium">
-                                <span>😊 Mood:</span>
-                                <div className="flex gap-2">
+                            <div className="bg-white/60 border border-white/40 px-4 py-2 rounded-xl flex items-center gap-3 text-sm font-bold text-secondary shadow-sm">
+                                <span>Mood:</span>
+                                <div className="flex gap-1">
                                     {moods.map((m) => (
                                         <button
                                             key={m}
                                             onClick={() => setFormData({ ...formData, mood: m })}
-                                            className={`w-8 h-8 flex items-center justify-center rounded bg-white hover:scale-110 transition-transform ${formData.mood === m ? 'ring-2 ring-primary' : ''
+                                            className={`w-8 h-8 flex items-center justify-center rounded-lg hover:scale-125 transition-transform ${formData.mood === m ? 'bg-white shadow-md scale-110' : 'opacity-50 hover:opacity-100'
                                                 }`}
                                         >
                                             {m}
@@ -144,113 +149,90 @@ export default function JournalPage() {
 
                         <textarea
                             placeholder="Start writing your thoughts here..."
-                            className="flex-1 resize-none border-2 border-gray-100 rounded-lg p-4 focus:outline-none focus:border-primary transition-colors leading-relaxed min-h-[300px]"
+                            className="flex-1 resize-none bg-transparent border-none p-0 focus:outline-none text-lg leading-loose text-foreground/80 placeholder:text-gray-300 min-h-[300px]"
                             value={formData.content}
                             onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                         ></textarea>
 
-                        <div className="bg-[#F5E6D3] rounded-xl p-4">
+                        <div className="bg-gradient-to-br from-surface-alt to-white rounded-2xl p-6 border border-white/50 shadow-sm">
                             <button
                                 onClick={() => setShowAIAnalysis(!showAIAnalysis)}
-                                className="flex items-center gap-3 w-full"
+                                className="flex items-center gap-3 w-full group"
                             >
-                                <div className={`w-12 h-6 rounded-full relative transition-colors ${showAIAnalysis ? 'bg-primary' : 'bg-gray-300'}`}>
-                                    <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-all ${showAIAnalysis ? 'left-6.5' : 'left-0.5'}`}></div>
+                                <div className={`w-12 h-7 rounded-full relative transition-colors duration-300 ${showAIAnalysis ? 'bg-secondary' : 'bg-gray-200'}`}>
+                                    <div className={`w-5 h-5 bg-white rounded-full absolute top-1 shadow-sm transition-all duration-300 ${showAIAnalysis ? 'left-6' : 'left-1'}`}></div>
                                 </div>
-                                <span className="font-medium text-secondary flex items-center gap-2">
-                                    <Sparkles size={16} /> Enable AI Analysis <span className="text-gray-500 font-normal text-sm">(Optional)</span>
+                                <span className="font-bold text-secondary flex items-center gap-2 group-hover:text-primary transition-colors">
+                                    <Sparkles size={18} className={showAIAnalysis ? 'text-accent' : 'text-gray-400'} />
+                                    AI Insights
+                                    <span className="text-gray-400 font-normal text-sm">(Analyze emotional patterns)</span>
                                 </span>
                             </button>
 
                             {showAIAnalysis && (
-                                <div className="mt-4 bg-white p-4 rounded-lg text-sm leading-relaxed animate-in fade-in slide-in-from-top-2">
-                                    <strong className="text-primary block mb-2">🤖 AI Insights:</strong>
-                                    Your entry shows positive emotional progression. Key themes detected: progress, self-care practices. Consider exploring more structured relaxation techniques.
+                                <div className="mt-6 bg-white p-6 rounded-xl border border-gray-100 shadow-sm text-sm leading-relaxed animate-fade-in relative overflow-hidden">
+                                    <div className="absolute top-0 left-0 w-1 h-full bg-accent"></div>
+                                    <strong className="text-secondary block mb-2 font-heading text-lg">Analysis Result</strong>
+                                    <p className="text-foreground/70">Your entry shows positive emotional progression. Key themes detected: <span className="font-semibold text-primary">progress</span>, <span className="font-semibold text-primary">self-care practices</span>. Consider exploring more structured relaxation techniques.</p>
                                 </div>
                             )}
                         </div>
                     </div>
-
-                    <div className="p-6 bg-[#F5E6D3] border-t border-gray-200 flex justify-between items-center">
-                        <div className="flex gap-3">
-                            <button
-                                onClick={handleSave}
-                                disabled={loading}
-                                className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-hover transition-all flex items-center gap-2 disabled:opacity-70"
-                            >
-                                <Save size={18} /> {loading ? 'Saving...' : 'Save Entry'}
-                            </button>
-                            <button
-                                onClick={handleNewEntry}
-                                className="bg-white text-secondary border-2 border-gray-200 px-6 py-3 rounded-lg font-semibold hover:border-primary hover:text-primary transition-all"
-                            >
-                                Clear
-                            </button>
-                        </div>
-                        <button className="text-red-500 hover:bg-red-50 px-4 py-2 rounded-lg transition-colors flex items-center gap-2 font-medium">
-                            <Trash2 size={18} /> Delete
-                        </button>
-                    </div>
                 </div>
 
                 {/* Entries List Section */}
-                <div className="flex-1 bg-white rounded-2xl shadow-sm flex flex-col overflow-hidden h-full">
-                    <div className="bg-gradient-to-r from-[#8B7AA8] to-[#75679A] p-6 text-white">
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="font-heading text-xl font-semibold flex items-center gap-2">
-                                <span>📚</span> Your Journal Entries
+                <div className="flex-1 glass rounded-[2.5rem] shadow-xl flex flex-col overflow-hidden h-full border border-white/40">
+                    <div className="p-6 border-b border-gray-100 bg-white/50 backdrop-blur-sm">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="font-heading text-xl font-bold text-secondary flex items-center gap-2">
+                                Your Journal
                             </h2>
-                            <button onClick={handleNewEntry} className="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-colors">
+                            <button onClick={handleNewEntry} className="bg-secondary text-white p-2 rounded-xl hover:bg-secondary-hover transition-colors shadow-lg shadow-secondary/20">
                                 <Plus size={20} />
                             </button>
                         </div>
-                        <div className="flex gap-2">
-                            <div className="flex-1 relative">
-                                <Search size={16} className="absolute left-3 top-3 text-gray-400" />
-                                <input
-                                    type="text"
-                                    placeholder="Search entries..."
-                                    className="w-full pl-9 pr-4 py-2 rounded-lg text-sm text-secondary focus:outline-none"
-                                />
-                            </div>
-                            <button className="bg-white/20 hover:bg-white/30 px-3 rounded-lg flex items-center gap-1 text-sm font-medium transition-colors">
-                                <Filter size={16} /> Filter
-                            </button>
+                        <div className="relative">
+                            <Search size={18} className="absolute left-4 top-3.5 text-gray-400" />
+                            <input
+                                type="text"
+                                placeholder="Search entries..."
+                                className="w-full pl-11 pr-4 py-3 rounded-xl bg-white border-none shadow-sm focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm font-medium"
+                            />
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                        {entries.map((entry) => (
+                    <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-surface-alt/30">
+                        {entries.map((entry, i) => (
                             <div
                                 key={entry._id}
                                 onClick={() => handleSelectEntry(entry)}
-                                className={`p-4 rounded-xl cursor-pointer transition-all border-2 hover:border-[#8B7AA8] hover:translate-x-1 ${selectedEntry?._id === entry._id
-                                        ? 'bg-[#8B7AA8] text-white border-[#8B7AA8]'
-                                        : 'bg-[#F5E6D3] border-transparent'
-                                    }`}
+                                className={`p-5 rounded-2xl cursor-pointer transition-all duration-300 border hover:-translate-y-1 hover:shadow-md ${selectedEntry?._id === entry._id
+                                        ? 'bg-white border-primary shadow-lg shadow-primary/5 ring-1 ring-primary'
+                                        : 'bg-white/60 border-transparent hover:bg-white'
+                                    } animate-slide-up`}
+                                style={{ animationDelay: `${i * 0.05}s` }}
                             >
                                 <div className="flex justify-between items-start mb-2">
-                                    <h3 className="font-semibold truncate pr-2">{entry.title || 'Untitled Entry'}</h3>
-                                    <span className="text-xl">{entry.mood || '😐'}</span>
+                                    <h3 className={`font-bold truncate pr-2 text-lg ${selectedEntry?._id === entry._id ? 'text-primary' : 'text-secondary'}`}>
+                                        {entry.title || 'Untitled Entry'}
+                                    </h3>
+                                    <span className="text-2xl filter drop-shadow-sm">{entry.mood || '😐'}</span>
                                 </div>
-                                <div className={`text-xs mb-2 ${selectedEntry?._id === entry._id ? 'text-white/80' : 'text-gray-500'}`}>
-                                    📅 {new Date(entry.createdAt).toLocaleDateString()}
+                                <div className="text-xs font-bold text-gray-400 mb-3 uppercase tracking-wider">
+                                    {new Date(entry.createdAt).toLocaleDateString()}
                                 </div>
-                                <p className={`text-sm line-clamp-2 ${selectedEntry?._id === entry._id ? 'text-white/90' : 'text-gray-600'}`}>
+                                <p className="text-sm line-clamp-2 text-foreground/60 leading-relaxed">
                                     {entry.content}
                                 </p>
                             </div>
                         ))}
 
                         {entries.length === 0 && (
-                            <div className="text-center py-10 text-gray-500">
-                                <p>No entries yet. Start writing!</p>
+                            <div className="text-center py-10 text-gray-400">
+                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">📝</div>
+                                <p className="font-medium">No entries yet. Start writing!</p>
                             </div>
                         )}
-                    </div>
-
-                    <div className="p-4 bg-[#F5E6D3] border-t border-gray-200 text-center text-sm font-medium text-gray-600">
-                        {entries.length} Total Entries • Last 30 Days
                     </div>
                 </div>
 
