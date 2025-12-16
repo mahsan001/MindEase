@@ -4,59 +4,96 @@ import { useState, useEffect } from 'react';
 import { BarChart2, TrendingUp, Calendar, ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
 
-interface MoodData {
-    date: string;
+interface MoodEntry {
     mood: string;
-    score: number; // 1-5
+    score: number;
+    time: string;
+    timeOfDay: 'morning' | 'afternoon' | 'evening';
+}
+
+interface DayMoodData {
+    date: string;
+    dayName: string;
+    entries: MoodEntry[];
 }
 
 export default function MoodPage() {
-    const [moodHistory, setMoodHistory] = useState<MoodData[]>([]);
+    const [moodHistory, setMoodHistory] = useState<DayMoodData[]>([]);
     const [loading, setLoading] = useState(true);
-    const { showToast } = useToast();
-
-    useEffect(() => {
+    const { showToast } = useToast();    useEffect(() => {
         fetchMoodHistory();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const getTimeOfDay = (date: Date): 'morning' | 'afternoon' | 'evening' => {
+        const hours = date.getHours();
+        if (hours < 12) return 'morning';
+        if (hours < 18) return 'afternoon';
+        return 'evening';
+    };
 
     const fetchMoodHistory = async () => {
         try {
             const res = await fetch('/api/journal');
-            const data = await res.json();
-
-            if (data.journals) {
-                // Transform journal entries into mood data
+            const data = await res.json();            if (data.journals) {
                 const moodMap: Record<string, number> = {
                     '😢': 1, '😟': 2, '😐': 3, '😊': 4, '😄': 5
                 };
 
-                const history = data.journals.map((entry: any) => ({
-                    date: new Date(entry.createdAt).toLocaleDateString('en-US', { weekday: 'short' }),
-                    mood: entry.mood || '😐',
-                    score: moodMap[entry.mood] || 3
-                })).reverse().slice(-7); // Last 7 entries
+                // Group entries by day
+                const dayGroups: Record<string, DayMoodData> = {};
 
-                setMoodHistory(history);
-            }
-        } catch (error) {
+                data.journals.forEach((entry: { createdAt: string; mood: string }) => {
+                    const entryDate = new Date(entry.createdAt);
+                    const dateKey = entryDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    const dayName = entryDate.toLocaleDateString('en-US', { weekday: 'short' });
+                    const timeOfDay = getTimeOfDay(entryDate);
+
+                    if (!dayGroups[dateKey]) {
+                        dayGroups[dateKey] = {
+                            date: dateKey,
+                            dayName,
+                            entries: []
+                        };
+                    }
+
+                    dayGroups[dateKey].entries.push({
+                        mood: entry.mood || '😐',
+                        score: moodMap[entry.mood] || 3,
+                        time: entryDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                        timeOfDay
+                    });
+                });
+
+                // Convert to array and sort by date, take last 7 days
+                const sortedHistory = Object.values(dayGroups)
+                    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                    .slice(-7);
+
+                setMoodHistory(sortedHistory);
+            }        } catch {
             showToast('Failed to load mood history', 'error');
         } finally {
             setLoading(false);
         }
-    };
-
-    const getAverageMood = () => {
+    };const getAverageMood = () => {
         if (moodHistory.length === 0) return 0;
-        const sum = moodHistory.reduce((acc, curr) => acc + curr.score, 0);
-        return (sum / moodHistory.length).toFixed(1);
+        const allScores = moodHistory.flatMap(day => day.entries.map(entry => entry.score));
+        if (allScores.length === 0) return 0;
+        const sum = allScores.reduce((acc, curr) => acc + curr, 0);
+        return (sum / allScores.length).toFixed(1);
     };
 
     const getMoodTrend = () => {
         if (moodHistory.length < 2) return 'neutral';
-        const last = moodHistory[moodHistory.length - 1].score;
-        const prev = moodHistory[moodHistory.length - 2].score;
-        if (last > prev) return 'up';
-        if (last < prev) return 'down';
+        const lastDay = moodHistory[moodHistory.length - 1];
+        const prevDay = moodHistory[moodHistory.length - 2];
+        
+        const lastAvg = lastDay.entries.reduce((sum, e) => sum + e.score, 0) / lastDay.entries.length;
+        const prevAvg = prevDay.entries.reduce((sum, e) => sum + e.score, 0) / prevDay.entries.length;
+        
+        if (lastAvg > prevAvg) return 'up';
+        if (lastAvg < prevAvg) return 'down';
         return 'neutral';
     };
 
@@ -80,9 +117,7 @@ export default function MoodPage() {
                             <Calendar size={16} className="text-primary" />
                             Last 7 Entries
                         </div>
-                    </div>
-
-                    {/* Custom Chart */}
+                    </div>                    {/* Custom Chart */}
                     <div className="flex-1 flex items-end justify-between gap-4 px-4 pb-8 relative min-h-[300px]">
                         {/* Grid Lines */}
                         <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-10">
@@ -94,21 +129,59 @@ export default function MoodPage() {
                         {loading ? (
                             <div className="w-full h-full flex items-center justify-center">
                                 <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-                            </div>
-                        ) : moodHistory.length > 0 ? (
-                            moodHistory.map((data, index) => (
-                                <div key={index} className="flex flex-col items-center gap-3 w-full group relative z-10">
-                                    <div
-                                        className="w-full max-w-[60px] bg-gradient-to-t from-primary/20 to-primary rounded-2xl relative transition-all duration-500 group-hover:scale-105 group-hover:shadow-lg shadow-primary/20"
-                                        style={{ height: `${(data.score / 5) * 300}px` }}
-                                    >
-                                        <div className="absolute -top-10 left-1/2 -translate-x-1/2 text-2xl transition-transform duration-300 group-hover:-translate-y-2">
-                                            {data.mood}
+                            </div>                        ) : moodHistory.length > 0 ? (
+                            moodHistory.map((dayData, dayIndex) => {
+                                // Group entries by time of day
+                                const morningEntries = dayData.entries.filter(e => e.timeOfDay === 'morning');
+                                const afternoonEntries = dayData.entries.filter(e => e.timeOfDay === 'afternoon');
+                                const eveningEntries = dayData.entries.filter(e => e.timeOfDay === 'evening');
+
+                                const renderTimeSection = (entries: MoodEntry[], label: string, bgColor: string) => {
+                                    return (
+                                        <div className={`flex-1 flex flex-col items-center justify-end gap-2 p-1 ${bgColor} relative`}>
+                                            {/* Time label at top */}
+                                            <div className="absolute top-2 left-1/2 -translate-x-1/2 text-[9px] font-bold text-black/40 uppercase tracking-wider">
+                                                {label}
+                                            </div>
+                                            {/* Stacked emojis */}
+                                            <div className="flex flex-col gap-1 mt-4">
+                                                {entries.map((entry, idx) => (
+                                                    <div
+                                                        key={idx}
+                                                        className="text-md transition-transform duration-300 hover:scale-125 cursor-default drop-shadow-lg"
+                                                        title={`${entry.time} - Score: ${entry.score}`}
+                                                    >
+                                                        {entry.mood}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    );
+                                };
+
+                                return (
+                                    <div key={dayIndex} className="flex flex-col items-center gap-3 w-full group relative z-10">
+                                        {/* Day container with 3 horizontal sections */}
+                                        <div className="w-full max-w-24 bg-white/40 backdrop-blur-sm rounded-2xl border-2 border-white/50 shadow-lg overflow-hidden min-h-80 flex">
+                                            {/* Morning Section (Left) */}
+                                            {renderTimeSection(morningEntries, 'Mor', 'bg-amber-300/50')}
+
+                                            {/* Afternoon Section (Middle) */}
+                                            {renderTimeSection(afternoonEntries, 'Aft', 'bg-orange-300/50 border-b-2 border-dashed border-white/40')}
+                                            
+                                            {/* Evening Section (Right) */}
+                                            {renderTimeSection(eveningEntries, 'Eve', 'bg-indigo-300/50 border-b-2 border-dashed border-white/40')}
+                                            
+                                            
+                                        </div>
+                                        {/* Date label */}
+                                        <div className="text-center">
+                                            <div className="text-xs font-bold text-secondary">{dayData.dayName}</div>
+                                            <div className="text-[10px] text-secondary/50">{dayData.date}</div>
                                         </div>
                                     </div>
-                                    <span className="text-sm font-bold text-secondary/60">{data.date}</span>
-                                </div>
-                            ))
+                                );
+                            })
                         ) : (
                             <div className="w-full text-center text-gray-400">
                                 No mood data available yet. Start journaling to track your mood!

@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Edit3, Trash2, Save, Plus, Search, Filter, Sparkles, Calendar, MoreHorizontal } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Trash2, Save, Plus, Search, Sparkles, Calendar } from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
 
 interface JournalEntry {
@@ -11,12 +11,12 @@ interface JournalEntry {
     mood: string;
     createdAt: string;
     sentiment?: string;
+    moodManuallySet?: boolean;
 }
 
 export default function JournalPage() {
     const [entries, setEntries] = useState<JournalEntry[]>([]);
     const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
-    const [isEditing, setIsEditing] = useState(true);
     const [formData, setFormData] = useState({
         title: '',
         content: '',
@@ -24,12 +24,46 @@ export default function JournalPage() {
     });
     const [showAIAnalysis, setShowAIAnalysis] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [moodManuallySet, setMoodManuallySet] = useState(false);
+    const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-    const moods = ['😢', '😟', '😐', '😊', '😄'];
-
-    useEffect(() => {
+    const moods = ['😢', '😟', '😐', '😊', '😄'];    useEffect(() => {
         fetchEntries();
     }, []);
+
+    // Sentiment analysis effect with debounce
+    useEffect(() => {
+        // Clear existing timer
+        if (debounceTimerRef.current) {
+            clearTimeout(debounceTimerRef.current);
+        }
+
+        // Only analyze if mood hasn't been manually set and content exists
+        if (!moodManuallySet && formData.content.trim().length > 10) {
+            debounceTimerRef.current = setTimeout(async () => {
+                try {
+                    const response = await fetch('/api/sentiment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text: formData.content }),
+                    });
+                    
+                    const data = await response.json();
+                    if (data.mood) {
+                        setFormData(prev => ({ ...prev, mood: data.mood }));
+                    }
+                } catch (error) {
+                    console.error('Sentiment analysis failed:', error);
+                }
+            }, 100); // 100ms debounce
+        }
+
+        return () => {
+            if (debounceTimerRef.current) {
+                clearTimeout(debounceTimerRef.current);
+            }
+        };
+    }, [formData.content, moodManuallySet]);
 
     const fetchEntries = async () => {
         try {
@@ -43,19 +77,26 @@ export default function JournalPage() {
         }
     };
 
-    const { showToast } = useToast();
-
-    const handleSave = async () => {
+    const { showToast } = useToast();    const handleSave = async () => {
         if (!formData.content) return;
         setLoading(true);
 
         try {
+            // Get final sentiment analysis
+            const sentimentRes = await fetch('/api/sentiment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: formData.content }),
+            });
+            const sentimentData = await sentimentRes.json();
+
             const res = await fetch('/api/journal', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     ...formData,
-                    sentiment: 'Neutral', // Placeholder for actual sentiment analysis
+                    sentiment: sentimentData.sentiment || 'Neutral',
+                    moodManuallySet,
                 }),
             });
 
@@ -64,6 +105,7 @@ export default function JournalPage() {
                 showToast('Journal entry saved successfully!', 'success');
                 // Reset form
                 setFormData({ title: '', content: '', mood: '😐' });
+                setMoodManuallySet(false);
             }
         } catch (error) {
             console.error('Failed to save journal', error);
@@ -80,13 +122,18 @@ export default function JournalPage() {
             content: entry.content,
             mood: entry.mood || '😐',
         });
-        setIsEditing(true);
+        setMoodManuallySet(entry.moodManuallySet || false);
     };
 
     const handleNewEntry = () => {
         setSelectedEntry(null);
         setFormData({ title: '', content: '', mood: '😐' });
-        setIsEditing(true);
+        setMoodManuallySet(false);
+    };
+
+    const handleMoodChange = (mood: string) => {
+        setFormData({ ...formData, mood });
+        setMoodManuallySet(true);
     };
 
     return (
@@ -130,14 +177,13 @@ export default function JournalPage() {
                             <div className="bg-white/60 border border-white/40 px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold text-secondary shadow-sm">
                                 <Calendar size={16} className="text-primary" />
                                 <span>{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</span>
-                            </div>
-                            <div className="bg-white/60 border border-white/40 px-4 py-2 rounded-xl flex items-center gap-3 text-sm font-bold text-secondary shadow-sm">
+                            </div>                            <div className="bg-white/60 border border-white/40 px-4 py-2 rounded-xl flex items-center gap-3 text-sm font-bold text-secondary shadow-sm">
                                 <span>Mood:</span>
                                 <div className="flex gap-1">
                                     {moods.map((m) => (
                                         <button
                                             key={m}
-                                            onClick={() => setFormData({ ...formData, mood: m })}
+                                            onClick={() => handleMoodChange(m)}
                                             className={`w-8 h-8 flex items-center justify-center rounded-lg hover:scale-125 transition-transform ${formData.mood === m ? 'bg-white shadow-md scale-110' : 'opacity-50 hover:opacity-100'
                                                 }`}
                                         >

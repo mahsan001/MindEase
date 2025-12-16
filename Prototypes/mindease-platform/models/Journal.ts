@@ -19,10 +19,13 @@ const JournalSchema = new mongoose.Schema({
         type: String,
         enum: ['Positive', 'Neutral', 'Negative'],
         default: 'Neutral',
-    },
-    mood: {
+    },    mood: {
         type: String,
         required: false,
+    },
+    moodManuallySet: {
+        type: Boolean,
+        default: false,
     },
     createdAt: {
         type: Date,

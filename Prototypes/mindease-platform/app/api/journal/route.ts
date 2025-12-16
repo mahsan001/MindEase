@@ -45,14 +45,15 @@ export async function POST(req: Request) {
             return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
         }
 
-        const { title, content, sentiment, mood } = await req.json();
+        const { title, content, sentiment, mood, moodManuallySet } = await req.json();
 
         const journal = await Journal.create({
             userId,
             title,
             content,
             sentiment,
-            mood, // Assuming we add mood to the schema or use sentiment field
+            mood,
+            moodManuallySet: moodManuallySet || false,
         });
 
         return NextResponse.json({ message: 'Journal created', journal }, { status: 201 });
