@@ -8,6 +8,7 @@ import { Menu, X } from 'lucide-react';
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const pathname = usePathname();
 
     useEffect(() => {
@@ -16,7 +17,21 @@ export default function Navbar() {
         };
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+    }, []);    useEffect(() => {
+        // Check if user is logged in by checking for auth token
+        const checkAuth = async () => {
+            try {
+                const res = await fetch('/api/auth/check', {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+                setIsLoggedIn(res.ok);
+            } catch {
+                setIsLoggedIn(false);
+            }
+        };
+        checkAuth();
+    }, [pathname]);
 
     const navLinks = [
         { name: 'Home', href: '/' },
@@ -61,24 +76,33 @@ export default function Navbar() {
                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
                             </Link>
                         ))}
-                    </div>
-
-                    {/* CTA Buttons */}
+                    </div>                    {/* CTA Buttons */}
                     <div className="hidden md:flex items-center gap-4">
                         {!isAuthPage && (
                             <>
-                                <Link
-                                    href="/login"
-                                    className="text-foreground font-medium hover:text-primary transition-colors"
-                                >
-                                    Login
-                                </Link>
-                                <Link
-                                    href="/register"
-                                    className="bg-secondary text-white px-6 py-2.5 rounded-xl font-medium hover:bg-secondary-hover transition-all transform hover:-translate-y-0.5 shadow-lg shadow-secondary/20"
-                                >
-                                    Get Started
-                                </Link>
+                                {isLoggedIn ? (
+                                    <Link
+                                        href="/dashboard"
+                                        className="bg-secondary text-white px-6 py-2.5 rounded-xl font-medium hover:bg-secondary-hover transition-all transform hover:-translate-y-0.5 shadow-lg shadow-secondary/20"
+                                    >
+                                        Dashboard
+                                    </Link>
+                                ) : (
+                                    <>
+                                        <Link
+                                            href="/login"
+                                            className="text-foreground font-medium hover:text-primary transition-colors"
+                                        >
+                                            Login
+                                        </Link>
+                                        <Link
+                                            href="/register"
+                                            className="bg-secondary text-white px-6 py-2.5 rounded-xl font-medium hover:bg-secondary-hover transition-all transform hover:-translate-y-0.5 shadow-lg shadow-secondary/20"
+                                        >
+                                            Get Started
+                                        </Link>
+                                    </>
+                                )}
                             </>
                         )}
                     </div>
@@ -105,23 +129,34 @@ export default function Navbar() {
                                 className="text-lg font-medium text-foreground py-2 border-b border-gray-50"
                             >
                                 {link.name}
-                            </Link>
-                        ))}
+                            </Link>                        ))}
                         <div className="flex flex-col gap-3 mt-4">
-                            <Link
-                                href="/login"
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="text-center py-3 rounded-xl border border-gray-200 font-medium"
-                            >
-                                Login
-                            </Link>
-                            <Link
-                                href="/register"
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="text-center py-3 rounded-xl bg-secondary text-white font-medium"
-                            >
-                                Get Started
-                            </Link>
+                            {isLoggedIn ? (
+                                <Link
+                                    href="/dashboard"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="text-center py-3 rounded-xl bg-secondary text-white font-medium"
+                                >
+                                    Dashboard
+                                </Link>
+                            ) : (
+                                <>
+                                    <Link
+                                        href="/login"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="text-center py-3 rounded-xl border border-gray-200 font-medium"
+                                    >
+                                        Login
+                                    </Link>
+                                    <Link
+                                        href="/register"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="text-center py-3 rounded-xl bg-secondary text-white font-medium"
+                                    >
+                                        Get Started
+                                    </Link>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
