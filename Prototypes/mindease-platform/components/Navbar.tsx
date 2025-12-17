@@ -39,9 +39,9 @@ export default function Navbar() {
         { name: 'Features', href: '/#features' },
         { name: 'About', href: '/#about' },
     ];    const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/register');
-    const isDashboard = pathname.startsWith('/dashboard') || pathname.startsWith('/chat') || pathname.startsWith('/journal') || pathname.startsWith('/mood') || pathname.startsWith('/tips');
+    const isProtectedPage = pathname.startsWith('/dashboard') || pathname.startsWith('/chat') || pathname.startsWith('/journal') || pathname.startsWith('/mood') || pathname.startsWith('/tips') || pathname.startsWith('/settings');
 
-    if (isDashboard) return null; // Protected pages have their own sidebar
+    if (isProtectedPage) return null; // Protected pages have their own sidebar
 
     return (
         <nav
