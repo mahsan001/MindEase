@@ -223,14 +223,12 @@ export default function SettingsPage() {
         { id: 'privacy', label: 'Privacy', icon: Shield },
         { id: 'appearance', label: 'Appearance', icon: Palette },
         { id: 'data', label: 'Data & Account', icon: Download },
-    ];
-
-    return (
-        <div className="w-full max-w-5xl">
+    ];    return (
+        <div className="w-full max-w-5xl mx-auto">
             {/* Header */}
-            <div className="mb-8">
-                <h1 className="text-4xl font-heading font-bold text-secondary mb-2">Settings</h1>
-                <p className="text-muted-foreground">Manage your account preferences and settings</p>
+            <div className="mb-6 md:mb-8">
+                <h1 className="text-3xl md:text-4xl font-heading font-bold text-secondary mb-2">Settings</h1>
+                <p className="text-muted-foreground text-sm md:text-base">Manage your account preferences and settings</p>
             </div>
 
             {/* Tabs */}

@@ -111,17 +111,15 @@ return (
                             New Chat
                         </button>
                     </div>
-                </div>
-
-                {/* Messages Area */}
-                <div className="flex-1 overflow-y-auto p-8 scroll-smooth">
+                </div>                {/* Messages Area */}
+                <div className="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth">
                     {showStarters ? (
-                        <div className="h-full flex flex-col items-center justify-center text-center max-w-2xl mx-auto animate-fade-in">
-                            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6 text-primary animate-scale-in">
-                                <Sparkles size={40} />
+                        <div className="h-full flex flex-col items-center justify-center text-center max-w-2xl mx-auto animate-fade-in px-4">
+                            <div className="w-16 md:w-20 h-16 md:h-20 bg-primary/10 rounded-full flex items-center justify-center mb-4 md:mb-6 text-primary animate-scale-in">
+                                <Sparkles size={32} className="md:w-10 md:h-10" />
                             </div>
-                            <h2 className="font-heading text-3xl md:text-4xl font-bold text-secondary mb-4">How can I support you today?</h2>
-                            <p className="text-foreground/60 mb-10 text-lg">Select a topic to start a conversation or type your own.</p>
+                            <h2 className="font-heading text-2xl md:text-3xl lg:text-4xl font-bold text-secondary mb-3 md:mb-4">How can I support you today?</h2>
+                            <p className="text-foreground/60 mb-6 md:mb-10 text-base md:text-lg">Select a topic to start a conversation or type your own.</p>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                                 {[

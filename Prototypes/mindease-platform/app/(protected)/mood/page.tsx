@@ -95,29 +95,27 @@ export default function MoodPage() {
         if (lastAvg > prevAvg) return 'up';
         if (lastAvg < prevAvg) return 'down';
         return 'neutral';
-    };
-
-    return (
+    };    return (
         <div className="flex flex-col h-[calc(100vh-140px)]">
-            <div className="flex-1 flex flex-col lg:flex-row gap-8 h-full">
+            <div className="flex-1 flex flex-col lg:flex-row gap-4 md:gap-8 h-full">
 
                 {/* Main Chart Section */}
-                <div className="flex-[2] glass rounded-[2.5rem] shadow-xl p-8 flex flex-col relative overflow-hidden">
+                <div className="flex-[2] glass rounded-3xl md:rounded-[2.5rem] shadow-xl p-4 md:p-8 flex flex-col relative overflow-hidden">
                     {/* Decorative Background */}
                     <div className="absolute top-0 right-0 w-full h-full overflow-hidden -z-10 opacity-30 pointer-events-none">
                         <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float"></div>
                     </div>
 
-                    <div className="flex justify-between items-start mb-12">
+                    <div className="flex flex-col md:flex-row justify-between md:items-start gap-3 mb-6 md:mb-12">
                         <div>
-                            <h1 className="font-heading text-3xl font-bold text-secondary mb-2">Mood Insights</h1>
-                            <p className="text-foreground/60">Tracking your emotional journey over the last 7 entries.</p>
+                            <h1 className="font-heading text-2xl md:text-3xl font-bold text-secondary mb-1 md:mb-2">Mood Insights</h1>
+                            <p className="text-foreground/60 text-sm md:text-base">Tracking your emotional journey over the last 7 entries.</p>
                         </div>
-                        <div className="bg-white/50 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/40 flex items-center gap-2 text-sm font-bold text-secondary">
-                            <Calendar size={16} className="text-primary" />
+                        <div className="bg-white/50 backdrop-blur-sm px-3 md:px-4 py-2 rounded-xl border border-white/40 flex items-center gap-2 text-xs md:text-sm font-bold text-secondary w-fit">
+                            <Calendar size={14} className="text-primary md:w-4 md:h-4" />
                             Last 7 Entries
                         </div>
-                    </div>                    {/* Custom Chart */}
+                    </div>{/* Custom Chart */}
                     <div className="flex-1 flex items-end justify-between gap-4 px-4 pb-8 relative min-h-[300px]">
                         {/* Grid Lines */}
                         <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-10">

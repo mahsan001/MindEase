@@ -15,22 +15,20 @@ export default function TipsPage() {
         const matchesSearch = tip.title.toLowerCase().includes(search.toLowerCase()) ||
             tip.content.toLowerCase().includes(search.toLowerCase());
         return matchesCategory && matchesSearch;
-    });
-
-    return (
+    });    return (
         <div className="flex flex-col h-full">
             <div className="flex-1 w-full">
 
                 {/* Header */}
-                <div className="text-center max-w-2xl mx-auto mb-16 animate-fade-in">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-100 shadow-sm text-sm font-bold text-accent mb-6 uppercase tracking-wider">
-                        <Lightbulb size={16} />
+                <div className="text-center max-w-2xl mx-auto mb-8 md:mb-16 animate-fade-in px-4">
+                    <div className="inline-flex items-center gap-2 px-3 md:px-4 py-2 rounded-full bg-white border border-gray-100 shadow-sm text-xs md:text-sm font-bold text-accent mb-4 md:mb-6 uppercase tracking-wider">
+                        <Lightbulb size={14} className="md:w-4 md:h-4" />
                         Daily Wisdom
                     </div>
-                    <h1 className="font-heading text-4xl md:text-5xl font-bold text-secondary mb-6">
+                    <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-secondary mb-4 md:mb-6">
                         Wellness Tips & Exercises
                     </h1>
-                    <p className="text-xl text-foreground/60 leading-relaxed">
+                    <p className="text-base md:text-xl text-foreground/60 leading-relaxed">
                         Simple, actionable practices to improve your mental well-being, one day at a time.
                     </p>
                 </div>

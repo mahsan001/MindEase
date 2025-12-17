@@ -110,14 +110,12 @@ export default function HelpPage() {
         { icon: Mail, title: 'Email Support', detail: 'support@mindease.pk', description: 'Response within 24 hours' },
         { icon: MessageCircle, title: 'Live Chat', detail: 'Available 9 AM - 6 PM PKT', description: 'Chat with our support team' },
         { icon: Phone, title: 'Phone Support', detail: '+92 21 3456 7890', description: 'Mon-Fri, 9 AM - 5 PM PKT' },
-    ];
-
-    return (
-        <div className="w-full max-w-6xl">
+    ];    return (
+        <div className="w-full max-w-6xl mx-auto">
             {/* Header */}
-            <div className="mb-8">
-                <h1 className="text-4xl font-heading font-bold text-secondary mb-2">Help & Support</h1>
-                <p className="text-muted-foreground">Find answers to common questions and get support</p>
+            <div className="mb-6 md:mb-8">
+                <h1 className="text-3xl md:text-4xl font-heading font-bold text-secondary mb-2">Help & Support</h1>
+                <p className="text-muted-foreground text-sm md:text-base">Find answers to common questions and get support</p>
             </div>
 
             {/* Quick Links */}

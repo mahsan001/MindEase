@@ -38,15 +38,13 @@ export default function DashboardPage() {
         } finally {
             setLoading(false);
         }
-    };
-
-    return (
-        <div className="space-y-8 animate-fade-in pb-8">
+    };    return (
+        <div className="space-y-6 md:space-y-8 animate-fade-in pb-8">
             {/* Header */}
-            <div className="flex justify-between items-end">
+            <div className="flex flex-col md:flex-row justify-between md:items-end gap-3">
                 <div>
-                    <h1 className="font-heading text-4xl font-bold text-secondary mb-2">Good Morning, User</h1>
-                    <p className="text-lg text-foreground/60">Ready to find your balance today?</p>
+                    <h1 className="font-heading text-3xl md:text-4xl font-bold text-secondary mb-2">Good Morning, User</h1>
+                    <p className="text-base md:text-lg text-foreground/60">Ready to find your balance today?</p>
                 </div>
                 <div className="hidden md:flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-100 text-sm font-medium text-secondary">
                     <Calendar size={16} className="text-primary" />

@@ -216,19 +216,17 @@ export default function JournalPage() {
                 setAnalyzingAI(false);
             }
         }
-    };
-
-    return (
-        <div className="flex flex-col h-[calc(100vh-140px)]">
-            <div className="flex-1 flex flex-col lg:flex-row gap-8 h-full">
+    };    return (
+        <div className="flex flex-col h-[calc(100vh-140px)] md:h-[calc(100vh-140px)]">
+            <div className="flex-1 flex flex-col lg:flex-row gap-4 md:gap-8 h-full">
 
                 {/* Editor Section */}
-                <div className="flex-[1.5] glass rounded-[2.5rem] shadow-xl flex flex-col overflow-hidden relative">
+                <div className="flex-[1.5] glass rounded-3xl md:rounded-[2.5rem] shadow-xl flex flex-col overflow-hidden relative">
                     {/* Decorative Background */}
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>                    <div className={`p-8 border-b border-gray-100 flex justify-between items-center bg-white/50 backdrop-blur-sm transition-all ${selectedEntry ? 'bg-amber-50/80 border-amber-200' : ''}`}>
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>                    <div className={`p-4 md:p-8 border-b border-gray-100 flex flex-col md:flex-row justify-between md:items-center gap-3 md:gap-0 bg-white/50 backdrop-blur-sm transition-all ${selectedEntry ? 'bg-amber-50/80 border-amber-200' : ''}`}>
                         <div>
-                            <div className="flex items-center gap-3 mb-1">
-                                <h2 className="font-heading text-3xl font-bold text-secondary">
+                            <div className="flex items-center gap-2 md:gap-3 mb-1">
+                                <h2 className="font-heading text-2xl md:text-3xl font-bold text-secondary">
                                     {selectedEntry ? 'Edit Entry' : 'Write Entry'}
                                 </h2>
                                 {selectedEntry && (
@@ -240,21 +238,20 @@ export default function JournalPage() {
                             <p className="text-foreground/60 text-sm font-medium">
                                 {selectedEntry ? 'Update your existing journal entry' : 'Express your thoughts freely'}
                             </p>
-                        </div>
-                        <div className="flex gap-2">
+                        </div>                        <div className="flex gap-2">
                             <button
                                 onClick={handleSave}
                                 disabled={loading}
-                                className="bg-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-primary-hover transition-all flex items-center gap-2 disabled:opacity-70 shadow-lg shadow-primary/20"
+                                className="bg-primary text-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-bold hover:bg-primary-hover transition-all flex items-center gap-2 disabled:opacity-70 shadow-lg shadow-primary/20 text-sm md:text-base"
                             >
-                                <Save size={18} /> {loading ? 'Saving...' : selectedEntry ? 'Update' : 'Save'}
+                                <Save size={16} className="md:w-[18px] md:h-[18px]" /> {loading ? 'Saving...' : selectedEntry ? 'Update' : 'Save'}
                             </button>
                             {selectedEntry && (
                                 <button 
                                     onClick={handleDelete}
-                                    className="p-3 bg-white rounded-xl border border-gray-200 text-gray-400 hover:text-error hover:border-error hover:bg-error/5 transition-all"
+                                    className="p-2 md:p-3 bg-white rounded-xl border border-gray-200 text-gray-400 hover:text-error hover:border-error hover:bg-error/5 transition-all"
                                 >
-                                    <Trash2 size={20} />
+                                    <Trash2 size={18} className="md:w-5 md:h-5" />
                                 </button>
                             )}
                         </div>
