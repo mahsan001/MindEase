@@ -482,14 +482,15 @@ export default function SettingsPage() {
 
                         <div>
                             <h3 className="font-medium text-gray-900 mb-3">Theme</h3>
-                            <div className="grid grid-cols-3 gap-4">                                {[
+                            <div className="grid grid-cols-3 gap-4">
+                                {[
                                     { value: 'light', label: 'Light', icon: '☀️' },
                                     { value: 'dark', label: 'Dark', icon: '🌙' },
                                     { value: 'auto', label: 'Auto', icon: '⚡' },
                                 ].map((option) => (
                                     <button
                                         key={option.value}
-                                        onClick={() => setTheme(option.value as 'light' | 'dark' | 'auto')}
+                                        onClick={() => setTheme(option.value as any)}
                                         className={`p-4 rounded-xl border-2 transition-all ${
                                             theme === option.value
                                                 ? 'border-secondary bg-secondary/5'
@@ -501,9 +502,11 @@ export default function SettingsPage() {
                                     </button>
                                 ))}
                             </div>
-                        </div>                        <div className="p-4 bg-blue-50 rounded-xl">
+                        </div>
+
+                        <div className="p-4 bg-blue-50 rounded-xl">
                             <p className="text-sm text-blue-800">
-                                <strong>Note:</strong> Dark mode is coming soon! We&apos;re working hard to bring you a beautiful dark theme.
+                                <strong>Note:</strong> Dark mode is coming soon! We're working hard to bring you a beautiful dark theme.
                             </p>
                         </div>
                     </div>
