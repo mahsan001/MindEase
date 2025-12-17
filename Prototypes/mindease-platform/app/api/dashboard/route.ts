@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Journal from '@/models/Journal';
+import User from '@/models/User';
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 
@@ -26,6 +27,9 @@ export async function GET() {
 
         const userId = decoded.userId;
 
+        // Fetch user data
+        const user = await User.findById(userId).select('name');
+        
         // Fetch stats
         const journalCount = await Journal.countDocuments({ userId });
 
@@ -37,12 +41,13 @@ export async function GET() {
             streak = 1;
             // Logic for streak calculation could be more complex
             // For now, just returning a placeholder or simple count
-        }
-
-        // Calculate mindful minutes (mocked for now as we don't track duration)
+        }        // Calculate mindful minutes (mocked for now as we don't track duration)
         const mindfulMinutes = journalCount * 15; // Assume 15 mins per entry
 
         return NextResponse.json({
+            user: {
+                name: user?.name || 'User'
+            },
             stats: {
                 journalCount,
                 moodStreak: streak, // Placeholder logic

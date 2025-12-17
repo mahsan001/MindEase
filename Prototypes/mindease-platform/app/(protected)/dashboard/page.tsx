@@ -12,6 +12,7 @@ export default function DashboardPage() {
         moodStreak: 0,
         mindfulMinutes: 0
     });
+    const [userName, setUserName] = useState('User');
     const [loading, setLoading] = useState(true);
     const { showToast } = useToast();
     const router = useRouter();
@@ -27,10 +28,12 @@ export default function DashboardPage() {
                 showToast('Session expired. Please log in again.', 'error');
                 router.push('/login');
                 return;
-            }
-            const data = await res.json();
+            }            const data = await res.json();
             if (data.stats) {
                 setStats(data.stats);
+            }
+            if (data.user?.name) {
+                setUserName(data.user.name);
             }
         } catch (error) {
             console.error('Failed to fetch dashboard data', error);
@@ -39,16 +42,53 @@ export default function DashboardPage() {
             setLoading(false);
         }
     };    return (
-        <div className="space-y-6 md:space-y-8 animate-fade-in pb-8">
-            {/* Header */}
+        <div className="space-y-6 md:space-y-8 animate-fade-in pb-8">            {/* Header */}
             <div className="flex flex-col md:flex-row justify-between md:items-end gap-3">
                 <div>
-                    <h1 className="font-heading text-3xl md:text-4xl font-bold text-secondary mb-2">Good Morning, User</h1>
+                    <h1 className="font-heading text-3xl md:text-4xl font-bold text-secondary mb-2">Good Morning, {userName}</h1>
                     <p className="text-base md:text-lg text-foreground/60">Ready to find your balance today?</p>
                 </div>
                 <div className="hidden md:flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-100 text-sm font-medium text-secondary">
                     <Calendar size={16} className="text-primary" />
                     {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                </div>
+            </div>
+
+            {/* Quick Actions - Mobile First (only visible on mobile) */}
+            <div className="md:hidden">
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="font-heading text-2xl font-bold text-secondary">Quick Actions</h2>
+                </div>
+                <div className="grid grid-cols-1 gap-6">
+                    <Link href="/journal" className="group bg-white p-1 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
+                        <div className="bg-surface-alt rounded-[1.7rem] p-6 h-full transition-colors group-hover:bg-primary/5">
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm group-hover:scale-110 transition-transform duration-300">
+                                    <Edit3 size={24} />
+                                </div>
+                                <div className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-all duration-300">
+                                    <ArrowUpRight size={20} />
+                                </div>
+                            </div>
+                            <h3 className="font-heading text-xl font-bold text-secondary mb-2">Write Journal</h3>
+                            <p className="text-foreground/60 text-sm">Reflect on your day and clear your mind.</p>
+                        </div>
+                    </Link>
+
+                    <Link href="/chat" className="group bg-white p-1 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
+                        <div className="bg-surface-alt rounded-[1.7rem] p-6 h-full transition-colors group-hover:bg-secondary/5">
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-secondary shadow-sm group-hover:scale-110 transition-transform duration-300">
+                                    <MessageSquare size={24} />
+                                </div>
+                                <div className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 group-hover:bg-secondary group-hover:text-white group-hover:border-secondary transition-all duration-300">
+                                    <ArrowUpRight size={20} />
+                                </div>
+                            </div>
+                            <h3 className="font-heading text-xl font-bold text-secondary mb-2">Chat with AI</h3>
+                            <p className="text-foreground/60 text-sm">Talk through your feelings in a safe space.</p>
+                        </div>
+                    </Link>
                 </div>
             </div>
 
@@ -94,8 +134,8 @@ export default function DashboardPage() {
                 ))}
             </div>
 
-            {/* Quick Actions */}
-            <div>
+            {/* Quick Actions - Desktop Only */}
+            <div className="hidden md:block">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="font-heading text-2xl font-bold text-secondary">Quick Actions</h2>
                 </div>

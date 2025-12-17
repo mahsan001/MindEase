@@ -100,7 +100,7 @@ export default function MoodPage() {
             <div className="flex-1 flex flex-col lg:flex-row gap-4 md:gap-8 h-full">
 
                 {/* Main Chart Section */}
-                <div className="flex-[2] glass rounded-3xl md:rounded-[2.5rem] shadow-xl p-4 md:p-8 flex flex-col relative overflow-hidden">
+                <div className="flex-[3] glass rounded-3xl md:rounded-[2.5rem] shadow-xl p-4 md:p-8 flex flex-col relative overflow-hidden">
                     {/* Decorative Background */}
                     <div className="absolute top-0 right-0 w-full h-full overflow-hidden -z-10 opacity-30 pointer-events-none">
                         <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float"></div>
@@ -189,15 +189,15 @@ export default function MoodPage() {
                 </div>
 
                 {/* Stats Sidebar */}
-                <div className="flex-1 flex flex-col gap-6">
+                <div className="flex-1 flex flex-col gap-4 md:gap-6">
                     {/* Average Mood Card */}
-                    <div className="glass-card p-8 rounded-[2.5rem] flex flex-col items-center text-center relative overflow-hidden">
+                    <div className="glass-card p-6 rounded-3xl md:rounded-[2.5rem] flex flex-col items-center text-center relative overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent -z-10"></div>
-                        <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg mb-4 text-primary">
-                            <BarChart2 size={32} />
+                        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg mb-3 text-primary">
+                            <BarChart2 size={28} />
                         </div>
-                        <div className="font-heading text-5xl font-bold text-secondary mb-2">{getAverageMood()}</div>
-                        <div className="text-foreground/60 font-medium mb-6">Average Mood Score</div>
+                        <div className="font-heading text-4xl font-bold text-secondary mb-1">{getAverageMood()}</div>
+                        <div className="text-foreground/60 font-medium text-sm mb-4">Average Mood Score</div>
                         <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
                             <div
                                 className="h-full bg-secondary transition-all duration-1000"
@@ -207,20 +207,20 @@ export default function MoodPage() {
                     </div>
 
                     {/* Trend Card */}
-                    <div className="glass-card p-8 rounded-[2.5rem] flex flex-col items-center text-center relative overflow-hidden">
+                    <div className="glass-card p-6 rounded-3xl md:rounded-[2.5rem] flex flex-col items-center text-center relative overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent -z-10"></div>
-                        <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg mb-4 text-accent">
-                            <TrendingUp size={32} />
+                        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg mb-3 text-accent">
+                            <TrendingUp size={28} />
                         </div>
-                        <div className="flex items-center gap-2 mb-2">
-                            {getMoodTrend() === 'up' && <ArrowUp size={32} className="text-success" />}
-                            {getMoodTrend() === 'down' && <ArrowDown size={32} className="text-error" />}
-                            {getMoodTrend() === 'neutral' && <Minus size={32} className="text-gray-400" />}
-                            <span className="font-heading text-3xl font-bold text-secondary">
+                        <div className="flex items-center gap-2 mb-1">
+                            {getMoodTrend() === 'up' && <ArrowUp size={24} className="text-success" />}
+                            {getMoodTrend() === 'down' && <ArrowDown size={24} className="text-error" />}
+                            {getMoodTrend() === 'neutral' && <Minus size={24} className="text-gray-400" />}
+                            <span className="font-heading text-2xl font-bold text-secondary">
                                 {getMoodTrend() === 'up' ? 'Improving' : getMoodTrend() === 'down' ? 'Declining' : 'Stable'}
                             </span>
                         </div>
-                        <div className="text-foreground/60 font-medium">Recent Trend</div>
+                        <div className="text-foreground/60 font-medium text-sm">Recent Trend</div>
                     </div>
                 </div>
 

@@ -257,7 +257,7 @@ export default function JournalPage() {
                         </div>
                     </div>
 
-                    <div className="flex-1 p-8 overflow-y-auto flex flex-col gap-6 relative">
+                    <div className="flex-1 p-6 md:p-8 overflow-y-auto flex flex-col gap-6 relative">
                         {selectedEntry && (
                                 <button
                                     onClick={handleNewEntry}
@@ -298,7 +298,7 @@ export default function JournalPage() {
 
                         <textarea
                             placeholder="Start writing your thoughts here..."
-                            className="flex-1 resize-none bg-transparent border-none p-0 focus:outline-none text-lg leading-loose text-foreground/80 placeholder:text-gray-300 min-h-[300px]"
+                            className="flex-1 resize-none bg-transparent border-none p-0 focus:outline-none text-lg leading-loose text-foreground/80 placeholder:text-gray-300 min-h-[200px]"
                             value={formData.content}
                             onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                         ></textarea>                        <div className="bg-gradient-to-br from-surface-alt to-white rounded-2xl p-6 border border-white/50 shadow-sm">                            <div className="flex items-center justify-between mb-4">
@@ -349,7 +349,7 @@ export default function JournalPage() {
                 </div>
 
                 {/* Entries List Section */}
-                <div className="flex-1 glass rounded-[2.5rem] shadow-xl flex flex-col overflow-hidden h-full border border-white/40">
+                <div className="flex-1 glass rounded-3xl md:rounded-[2.5rem] shadow-xl flex flex-col overflow-hidden h-full border border-white/40">
                     <div className="p-6 border-b border-gray-100 bg-white/50 backdrop-blur-sm">
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="font-heading text-xl font-bold text-secondary flex items-center gap-2">
@@ -369,7 +369,7 @@ export default function JournalPage() {
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-surface-alt/30">
+                    <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-surface-alt/30 min-h-[400px] md:min-h-[500px]">
                         {entries.map((entry, i) => (
                             <div
                                 key={entry._id}

@@ -90,27 +90,29 @@ return (
                 </div>
 
                 {/* Chat Header */}
-                <div className="bg-white/40 backdrop-blur-md p-6 flex justify-between items-center border-b border-white/20">
-                    <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 bg-gradient-to-br from-secondary to-secondary-hover text-white rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-secondary/20">
-                            <Bot size={28} />
+                <div className="bg-white/40 backdrop-blur-md p-4 md:p-6 flex justify-between items-center border-b border-white/20">
+                    <div className="flex items-center gap-3 md:gap-4">
+                        <div className="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-secondary to-secondary-hover text-white rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-secondary/20">
+                            <Bot size={24} className="md:w-7 md:h-7" />
                         </div>
                         <div>
-                            <h3 className="font-heading font-bold text-xl text-secondary">MindEase AI</h3>
-                            <div className="flex items-center gap-2 text-sm text-foreground/60">
+                            <h3 className="font-heading font-bold text-lg md:text-xl text-secondary">MindEase AI</h3>
+                            <div className="flex items-center gap-2 text-xs md:text-sm text-foreground/60">
                                 <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.5)]"></span>
                                 Online & Listening
                             </div>
                         </div>
                     </div>
-                    <div className="flex gap-3">
-                        <button
-                            onClick={() => { setMessages([]); setShowStarters(true); }}
-                            className="px-4 py-2 bg-white/50 hover:bg-white/80 rounded-xl text-sm font-medium transition-all text-secondary border border-white/40"
-                        >
-                            New Chat
-                        </button>
-                    </div>
+                    {messages.length > 0 && (
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => { setMessages([]); setShowStarters(true); }}
+                                className="px-3 md:px-4 py-2 bg-white/50 hover:bg-white/80 rounded-xl text-xs md:text-sm font-medium transition-all text-secondary border border-white/40"
+                            >
+                                New Chat
+                            </button>
+                        </div>
+                    )}
                 </div>                {/* Messages Area */}
                 <div className="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth">
                     {showStarters ? (
@@ -121,7 +123,7 @@ return (
                             <h2 className="font-heading text-2xl md:text-3xl lg:text-4xl font-bold text-secondary mb-3 md:mb-4">How can I support you today?</h2>
                             <p className="text-foreground/60 mb-6 md:mb-10 text-base md:text-lg">Select a topic to start a conversation or type your own.</p>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                            <div className="grid grid-cols-2 gap-3 md:gap-4 w-full">
                                 {[
                                     { id: 'anxious', icon: '😟', label: "I'm feeling anxious" },
                                     { id: 'down', icon: '😔', label: "I'm feeling down" },
@@ -131,11 +133,11 @@ return (
                                     <button
                                         key={item.id}
                                         onClick={() => startConversation(item.id)}
-                                        className="bg-white/60 backdrop-blur-sm p-6 rounded-2xl border border-white/40 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all text-left group animate-slide-up"
+                                        className="bg-white/60 backdrop-blur-sm p-4 md:p-6 rounded-2xl border border-white/40 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all text-left group animate-slide-up"
                                         style={{ animationDelay: `${i * 0.1}s` }}
                                     >
-                                        <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
-                                        <div className="font-bold text-secondary text-lg">{item.label}</div>
+                                        <div className="text-2xl md:text-3xl mb-2 md:mb-3 group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
+                                        <div className="font-bold text-secondary text-sm md:text-lg">{item.label}</div>
                                     </button>
                                 ))}
                             </div>
@@ -173,22 +175,23 @@ return (
                 </div>
 
                 {/* Input Area */}
-                <div className="p-6 bg-white/40 backdrop-blur-md border-t border-white/20">
-                    <div className="flex gap-4 bg-white rounded-2xl p-2 shadow-sm border border-gray-100 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+                <div className="p-4 md:p-6 bg-white/40 backdrop-blur-md border-t border-white/20">
+                    <div className="flex gap-2 md:gap-4 bg-white rounded-2xl p-2 shadow-sm border border-gray-100 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
                         <input
                             type="text"
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSendMessage(input)}
                             placeholder="Type your message here..."
-                            className="flex-1 bg-transparent px-4 py-3 focus:outline-none text-lg placeholder:text-gray-400"
+                            className="flex-1 bg-transparent px-3 md:px-4 py-2 md:py-3 focus:outline-none text-base md:text-lg placeholder:text-gray-400"
                         />
                         <button
                             onClick={() => handleSendMessage(input)}
                             disabled={!input.trim() || loading}
-                            className="bg-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-primary-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg shadow-primary/20"
+                            className="bg-primary text-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-bold hover:bg-primary-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg shadow-primary/20 text-sm md:text-base"
                         >
-                            Send <Send size={18} />
+                            <span className="hidden md:inline">Send</span>
+                            <Send size={16} className="md:w-[18px] md:h-[18px]" />
                         </button>
                     </div>
                     <p className="text-center text-xs text-gray-500 mt-4 flex items-center justify-center gap-1 font-medium">
