@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Trash2, Save, Plus, Search, Sparkles, Calendar } from 'lucide-react';
+import { Trash2, Save, Plus, Search, Sparkles, Calendar, X } from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
 
 interface JournalEntry {
@@ -21,17 +21,16 @@ export default function JournalPage() {
         title: '',
         content: '',
         mood: '😐',
-    });
-    const [showAIAnalysis, setShowAIAnalysis] = useState(false);
+    });    const [showAIAnalysis, setShowAIAnalysis] = useState(false);
     const [loading, setLoading] = useState(false);
     const [moodManuallySet, setMoodManuallySet] = useState(false);
+    const [aiAnalysisResult, setAiAnalysisResult] = useState<string>('');
+    const [analyzingAI, setAnalyzingAI] = useState(false);
     const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     const moods = ['😢', '😟', '😐', '😊', '😄'];    useEffect(() => {
         fetchEntries();
-    }, []);
-
-    // Sentiment analysis effect with debounce
+    }, []);    // Sentiment analysis effect with debounce
     useEffect(() => {
         // Clear existing timer
         if (debounceTimerRef.current) {
@@ -58,12 +57,18 @@ export default function JournalPage() {
             }, 100); // 100ms debounce
         }
 
+        // Auto-close AI analysis if content becomes too short
+        if (showAIAnalysis && formData.content.trim().length < 20) {
+            setShowAIAnalysis(false);
+            setAiAnalysisResult('');
+        }
+
         return () => {
             if (debounceTimerRef.current) {
                 clearTimeout(debounceTimerRef.current);
             }
         };
-    }, [formData.content, moodManuallySet]);
+    }, [formData.content, moodManuallySet, showAIAnalysis]);
 
     const fetchEntries = async () => {
         try {
@@ -90,28 +95,74 @@ export default function JournalPage() {
             });
             const sentimentData = await sentimentRes.json();
 
-            const res = await fetch('/api/journal', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    ...formData,
-                    sentiment: sentimentData.sentiment || 'Neutral',
-                    moodManuallySet,
-                }),
-            });
+            // If editing existing entry, update it; otherwise create new
+            if (selectedEntry) {
+                // Update existing entry
+                const res = await fetch(`/api/journal/${selectedEntry._id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ...formData,
+                        sentiment: sentimentData.sentiment || 'Neutral',
+                        moodManuallySet,
+                    }),
+                });
 
-            if (res.ok) {
-                await fetchEntries();
-                showToast('Journal entry saved successfully!', 'success');
-                // Reset form
-                setFormData({ title: '', content: '', mood: '😐' });
-                setMoodManuallySet(false);
+                if (res.ok) {
+                    await fetchEntries();
+                    showToast('Journal entry updated successfully!', 'success');
+                    setSelectedEntry(null);
+                    setFormData({ title: '', content: '', mood: '😐' });
+                    setMoodManuallySet(false);
+                }
+            } else {
+                // Create new entry
+                const res = await fetch('/api/journal', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ...formData,
+                        sentiment: sentimentData.sentiment || 'Neutral',
+                        moodManuallySet,
+                    }),
+                });
+
+                if (res.ok) {
+                    await fetchEntries();
+                    showToast('Journal entry saved successfully!', 'success');
+                    setFormData({ title: '', content: '', mood: '😐' });
+                    setMoodManuallySet(false);
+                }
             }
         } catch (error) {
             console.error('Failed to save journal', error);
             showToast('Failed to save journal entry.', 'error');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!selectedEntry) return;
+        
+        if (!confirm('Are you sure you want to delete this entry?')) return;
+
+        try {
+            const res = await fetch(`/api/journal/${selectedEntry._id}`, {
+                method: 'DELETE',
+            });
+
+            if (res.ok) {
+                await fetchEntries();
+                showToast('Journal entry deleted successfully!', 'success');
+                // Reset to new entry mode
+                setSelectedEntry(null);
+                setFormData({ title: '', content: '', mood: '😐' });
+                setMoodManuallySet(false);
+            }
+        } catch (error) {
+            console.error('Failed to delete journal', error);
+            showToast('Failed to delete journal entry.', 'error');
         }
     };
 
@@ -129,11 +180,42 @@ export default function JournalPage() {
         setSelectedEntry(null);
         setFormData({ title: '', content: '', mood: '😐' });
         setMoodManuallySet(false);
-    };
-
-    const handleMoodChange = (mood: string) => {
+    };    const handleMoodChange = (mood: string) => {
         setFormData({ ...formData, mood });
         setMoodManuallySet(true);
+    };    const handleToggleAIAnalysis = async () => {
+        // Don't allow toggle if content is too short
+        if (formData.content.trim().length < 20) {
+            showToast('Please write at least 20 characters to enable AI analysis', 'info');
+            return;
+        }
+
+        const newState = !showAIAnalysis;
+        setShowAIAnalysis(newState);
+
+        // If turning on and we have content, analyze it
+        if (newState && formData.content.trim().length >= 20) {
+            setAnalyzingAI(true);
+            try {
+                const response = await fetch('/api/analyze-journal', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: formData.content }),
+                });
+
+                const data = await response.json();
+                if (data.analysis) {
+                    setAiAnalysisResult(data.analysis);
+                } else {
+                    setAiAnalysisResult('Unable to generate analysis. Please try again.');
+                }
+            } catch (error) {
+                console.error('AI Analysis failed:', error);
+                setAiAnalysisResult('Failed to analyze entry. Please check your connection and try again.');
+            } finally {
+                setAnalyzingAI(false);
+            }
+        }
     };
 
     return (
@@ -143,12 +225,21 @@ export default function JournalPage() {
                 {/* Editor Section */}
                 <div className="flex-[1.5] glass rounded-[2.5rem] shadow-xl flex flex-col overflow-hidden relative">
                     {/* Decorative Background */}
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-
-                    <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-white/50 backdrop-blur-sm">
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>                    <div className={`p-8 border-b border-gray-100 flex justify-between items-center bg-white/50 backdrop-blur-sm transition-all ${selectedEntry ? 'bg-amber-50/80 border-amber-200' : ''}`}>
                         <div>
-                            <h2 className="font-heading text-3xl font-bold text-secondary mb-1">Write Entry</h2>
-                            <p className="text-foreground/60 text-sm font-medium">Express your thoughts freely</p>
+                            <div className="flex items-center gap-3 mb-1">
+                                <h2 className="font-heading text-3xl font-bold text-secondary">
+                                    {selectedEntry ? 'Edit Entry' : 'Write Entry'}
+                                </h2>
+                                {selectedEntry && (
+                                    <span className="px-3 py-1 bg-amber-500 text-white text-xs font-bold rounded-full uppercase tracking-wider">
+                                        Editing
+                                    </span>
+                                )}
+                            </div>
+                            <p className="text-foreground/60 text-sm font-medium">
+                                {selectedEntry ? 'Update your existing journal entry' : 'Express your thoughts freely'}
+                            </p>
                         </div>
                         <div className="flex gap-2">
                             <button
@@ -156,15 +247,29 @@ export default function JournalPage() {
                                 disabled={loading}
                                 className="bg-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-primary-hover transition-all flex items-center gap-2 disabled:opacity-70 shadow-lg shadow-primary/20"
                             >
-                                <Save size={18} /> {loading ? 'Saving...' : 'Save'}
+                                <Save size={18} /> {loading ? 'Saving...' : selectedEntry ? 'Update' : 'Save'}
                             </button>
-                            <button className="p-3 bg-white rounded-xl border border-gray-200 text-gray-400 hover:text-error hover:border-error transition-colors">
-                                <Trash2 size={20} />
-                            </button>
+                            {selectedEntry && (
+                                <button 
+                                    onClick={handleDelete}
+                                    className="p-3 bg-white rounded-xl border border-gray-200 text-gray-400 hover:text-error hover:border-error hover:bg-error/5 transition-all"
+                                >
+                                    <Trash2 size={20} />
+                                </button>
+                            )}
                         </div>
                     </div>
 
-                    <div className="flex-1 p-8 overflow-y-auto flex flex-col gap-6">
+                    <div className="flex-1 p-8 overflow-y-auto flex flex-col gap-6 relative">
+                        {selectedEntry && (
+                                <button
+                                    onClick={handleNewEntry}
+                                    className="p-3 bg-white rounded-full shadow-xl w-10 h-10 flex justify-center items-center absolute right-0 top-0 m-8 border border-gray-200 text-gray-400 hover:text-gray-600 hover:border-gray-300 hover:bg-gray-50 transition-all"
+                                    title="Cancel Edit"
+                                >
+                                    <X size={20} />
+                                </button>
+                        )}
                         <input
                             type="text"
                             placeholder="Untitled Entry"
@@ -199,28 +304,47 @@ export default function JournalPage() {
                             className="flex-1 resize-none bg-transparent border-none p-0 focus:outline-none text-lg leading-loose text-foreground/80 placeholder:text-gray-300 min-h-[300px]"
                             value={formData.content}
                             onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                        ></textarea>
+                        ></textarea>                        <div className="bg-gradient-to-br from-surface-alt to-white rounded-2xl p-6 border border-white/50 shadow-sm">                            <div className="flex items-center justify-between mb-4">
+                                <button
+                                    onClick={handleToggleAIAnalysis}
+                                    disabled={analyzingAI || formData.content.trim().length < 20}
+                                    className="flex items-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <div className={`w-12 h-7 rounded-full relative transition-colors duration-300 ${showAIAnalysis && formData.content.trim().length >= 20 ? 'bg-secondary' : 'bg-gray-200'}`}>
+                                        <div className={`w-5 h-5 bg-white rounded-full absolute top-1 shadow-sm transition-all duration-300 ${showAIAnalysis && formData.content.trim().length >= 20 ? 'left-6' : 'left-1'}`}></div>
+                                    </div>
+                                    <span className="font-bold text-secondary flex items-center gap-2 group-hover:text-primary transition-colors">
+                                        <Sparkles size={18} className={showAIAnalysis && formData.content.trim().length >= 20 ? 'text-accent' : 'text-gray-400'} />
+                                        AI Insights
+                                    </span>
+                                </button>
 
-                        <div className="bg-gradient-to-br from-surface-alt to-white rounded-2xl p-6 border border-white/50 shadow-sm">
-                            <button
-                                onClick={() => setShowAIAnalysis(!showAIAnalysis)}
-                                className="flex items-center gap-3 w-full group"
-                            >
-                                <div className={`w-12 h-7 rounded-full relative transition-colors duration-300 ${showAIAnalysis ? 'bg-secondary' : 'bg-gray-200'}`}>
-                                    <div className={`w-5 h-5 bg-white rounded-full absolute top-1 shadow-sm transition-all duration-300 ${showAIAnalysis ? 'left-6' : 'left-1'}`}></div>
+                                {/* Live character count */}
+                                <div className={`text-xs font-semibold transition-colors ${formData.content.trim().length >= 20 ? 'text-green-600' : 'text-gray-400'}`}>
+                                    {formData.content.trim().length} / 20 characters
                                 </div>
-                                <span className="font-bold text-secondary flex items-center gap-2 group-hover:text-primary transition-colors">
-                                    <Sparkles size={18} className={showAIAnalysis ? 'text-accent' : 'text-gray-400'} />
-                                    AI Insights
-                                    <span className="text-gray-400 font-normal text-sm">(Analyze emotional patterns)</span>
-                                </span>
-                            </button>
+                            </div>
 
-                            {showAIAnalysis && (
+                            {/* Only show analysis result if content is sufficient */}
+                            {showAIAnalysis && formData.content.trim().length >= 20 && (
                                 <div className="mt-6 bg-white p-6 rounded-xl border border-gray-100 shadow-sm text-sm leading-relaxed animate-fade-in relative overflow-hidden">
                                     <div className="absolute top-0 left-0 w-1 h-full bg-accent"></div>
-                                    <strong className="text-secondary block mb-2 font-heading text-lg">Analysis Result</strong>
-                                    <p className="text-foreground/70">Your entry shows positive emotional progression. Key themes detected: <span className="font-semibold text-primary">progress</span>, <span className="font-semibold text-primary">self-care practices</span>. Consider exploring more structured relaxation techniques.</p>
+                                    <strong className="text-secondary mb-2 font-heading text-lg flex items-center gap-2">
+                                        <Sparkles size={20} className="text-accent" />
+                                        Analysis Result
+                                    </strong>
+                                    {analyzingAI ? (
+                                        <div className="flex items-center gap-3 text-foreground/60">
+                                            <div className="w-4 h-4 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                                            Analyzing your entry...
+                                        </div>
+                                    ) : (
+                                        <div className="text-foreground/70 space-y-3">
+                                            {aiAnalysisResult.split('\n').map((line, idx) => (
+                                                <p key={idx}>{line}</p>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>

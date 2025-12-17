@@ -111,6 +111,15 @@ body {
   }
 }
 
+/* Ensure all buttons have pointer cursor */
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
