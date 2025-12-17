@@ -217,7 +217,7 @@ export default function JournalPage() {
             }
         }
     };    return (
-        <div className="flex flex-col h-[calc(100vh-140px)] md:h-[calc(100vh-140px)]">
+        <div className="flex flex-col">
             <div className="flex-1 flex flex-col lg:flex-row gap-4 md:gap-8 h-full">
 
                 {/* Editor Section */}
@@ -238,7 +238,8 @@ export default function JournalPage() {
                             <p className="text-foreground/60 text-sm font-medium">
                                 {selectedEntry ? 'Update your existing journal entry' : 'Express your thoughts freely'}
                             </p>
-                        </div>                        <div className="flex gap-2">
+                        </div>
+                        <div className="flex gap-2 absolute top-4 right-2 sm:relative flex-row-reverse">
                             <button
                                 onClick={handleSave}
                                 disabled={loading}
@@ -257,7 +258,7 @@ export default function JournalPage() {
                         </div>
                     </div>
 
-                    <div className="flex-1 p-6 md:p-8 overflow-y-auto flex flex-col gap-6 relative">
+                    <div className=" p-6 md:p-8 flex flex-col gap-6 relative">
                         {selectedEntry && (
                                 <button
                                     onClick={handleNewEntry}
@@ -270,7 +271,7 @@ export default function JournalPage() {
                         <input
                             type="text"
                             placeholder="Untitled Entry"
-                            className="text-4xl font-heading font-bold bg-transparent border-none p-0 focus:outline-none placeholder:text-gray-300 text-secondary"
+                            className="text-3xl md:text-4xl font-heading font-bold bg-transparent border-none p-0 focus:outline-none placeholder:text-gray-300 text-secondary"
                             value={formData.title}
                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                         />
@@ -301,7 +302,7 @@ export default function JournalPage() {
                             className="flex-1 resize-none bg-transparent border-none p-0 focus:outline-none text-lg leading-loose text-foreground/80 placeholder:text-gray-300 min-h-[200px]"
                             value={formData.content}
                             onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                        ></textarea>                        <div className="bg-gradient-to-br from-surface-alt to-white rounded-2xl p-6 border border-white/50 shadow-sm">                            <div className="flex items-center justify-between mb-4">
+                        ></textarea>                        <div className="bg-gradient-to-br from-surface-alt to-white rounded-2xl p-2 border border-white/50 shadow-sm">                            <div className="flex items-center justify-between">
                                 <button
                                     onClick={handleToggleAIAnalysis}
                                     disabled={analyzingAI || formData.content.trim().length < 20}
@@ -369,7 +370,7 @@ export default function JournalPage() {
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-surface-alt/30 min-h-[400px] md:min-h-[500px]">
+                    <div className="flex-1 p-4 space-y-3 bg-surface-alt/30 min-h-[400px] md:min-h-[500px]">
                         {entries.map((entry, i) => (
                             <div
                                 key={entry._id}

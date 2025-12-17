@@ -160,7 +160,7 @@ export default function MoodPage() {
                                 return (
                                     <div key={dayIndex} className="flex flex-col items-center gap-3 w-full group relative z-10">
                                         {/* Day container with 3 horizontal sections */}
-                                        <div className="w-full max-w-24 bg-white/40 backdrop-blur-sm rounded-2xl border-2 border-white/50 shadow-lg overflow-hidden min-h-80 flex">
+                                        <div className="w-full max-w-24 bg-white/40 backdrop-blur-sm rounded-2xl border-2 border-white/50 shadow-lg overflow-hidden min-h-40 flex mb-3">
                                             {/* Morning Section (Left) */}
                                             {renderTimeSection(morningEntries, 'Mor', 'bg-amber-300/50')}
 

@@ -45,7 +45,7 @@ export default function DashboardPage() {
         <div className="space-y-6 md:space-y-8 animate-fade-in pb-8">            {/* Header */}
             <div className="flex flex-col md:flex-row justify-between md:items-end gap-3">
                 <div>
-                    <h1 className="font-heading text-3xl md:text-4xl font-bold text-secondary mb-2">Good Morning, {userName}</h1>
+                    <h1 className="font-heading text-3xl md:text-4xl font-bold text-secondary mb-2">Good Morning, {userName}!</h1>
                     <p className="text-base md:text-lg text-foreground/60">Ready to find your balance today?</p>
                 </div>
                 <div className="hidden md:flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-100 text-sm font-medium text-secondary">
@@ -55,11 +55,11 @@ export default function DashboardPage() {
             </div>
 
             {/* Quick Actions - Mobile First (only visible on mobile) */}
-            <div className="md:hidden">
+            <div className="md:hidden bg-accent/10 p-4 -mx-4">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="font-heading text-2xl font-bold text-secondary">Quick Actions</h2>
                 </div>
-                <div className="grid grid-cols-1 gap-6">
+                <div className="grid grid-cols-2 gap-6">
                     <Link href="/journal" className="group bg-white p-1 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300">
                         <div className="bg-surface-alt rounded-[1.7rem] p-6 h-full transition-colors group-hover:bg-primary/5">
                             <div className="flex justify-between items-start mb-4">
