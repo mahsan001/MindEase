@@ -38,12 +38,10 @@ export default function Navbar() {
         { name: 'Home', href: '/' },
         { name: 'Features', href: '/#features' },
         { name: 'About', href: '/#about' },
-    ];
+    ];    const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/register');
+    const isDashboard = pathname.startsWith('/dashboard') || pathname.startsWith('/chat') || pathname.startsWith('/journal') || pathname.startsWith('/mood') || pathname.startsWith('/tips');
 
-    const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/register');
-    const isDashboard = pathname.startsWith('/dashboard') || pathname.startsWith('/chat') || pathname.startsWith('/journal');
-
-    if (isDashboard) return null; // Dashboard has its own sidebar
+    if (isDashboard) return null; // Protected pages have their own sidebar
 
     return (
         <nav
