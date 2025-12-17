@@ -2,11 +2,32 @@
 
 import Link from 'next/link';
 import Image from 'next/image'
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Home, MessageSquare, Book, BarChart2, Lightbulb, Settings, HelpCircle, LogOut } from 'lucide-react';
+import { useUser } from '@/context/UserContext';
 
 export default function Sidebar() {
     const pathname = usePathname();
+    const router = useRouter();
+    const { setUser } = useUser();    const handleLogout = async () => {
+        try {
+            // Call logout API to clear the cookie
+            await fetch('/api/auth/logout', {
+                method: 'POST',
+            });
+            
+            // Clear user data from context and localStorage
+            setUser(null);
+            
+            // Redirect to home page
+            router.push('/');
+        } catch (error) {
+            console.error('Logout failed:', error);
+            // Still clear local data and redirect even if API call fails
+            setUser(null);
+            router.push('/');
+        }
+    };
 
     const menuItems = [
         { icon: Home, label: 'Dashboard', href: '/dashboard' },
@@ -74,9 +95,11 @@ export default function Sidebar() {
                                 </Link>
                             </li>
                         );
-                    })}
-                    <li>
-                        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-medium text-error/80 hover:bg-error/10 hover:text-error transition-all duration-300 group">
+                    })}                    <li>
+                        <button 
+                            onClick={handleLogout}
+                            className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-medium text-error/80 hover:bg-error/10 hover:text-error transition-all duration-300 group"
+                        >
                             <LogOut size={20} className="group-hover:-translate-x-1 transition-transform duration-300" />
                             <span>Sign Out</span>
                         </button>

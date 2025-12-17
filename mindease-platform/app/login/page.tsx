@@ -12,9 +12,7 @@ export default function LoginPage() {
         password: '',
     });
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
-
-    const handleSubmit = async (e: React.FormEvent) => {
+    const [loading, setLoading] = useState(false);    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         setLoading(true);
@@ -30,6 +28,11 @@ export default function LoginPage() {
 
             if (!res.ok) {
                 throw new Error(data.message || 'Something went wrong');
+            }
+
+            // Store user data in localStorage for instant access
+            if (data.user) {
+                localStorage.setItem('mindease_user', JSON.stringify(data.user));
             }
 
             router.push('/dashboard');

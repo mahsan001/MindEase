@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Lightbulb, Edit3, MessageSquare, BarChart2, Target, ArrowUpRight, Calendar } from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/context/UserContext';
 
 export default function DashboardPage() {
     const [stats, setStats] = useState({
@@ -12,10 +13,10 @@ export default function DashboardPage() {
         moodStreak: 0,
         mindfulMinutes: 0
     });
-    const [userName, setUserName] = useState('User');
     const [loading, setLoading] = useState(true);
     const { showToast } = useToast();
     const router = useRouter();
+    const { user, setUser } = useUser();
 
     useEffect(() => {
         fetchDashboardData();
@@ -28,12 +29,13 @@ export default function DashboardPage() {
                 showToast('Session expired. Please log in again.', 'error');
                 router.push('/login');
                 return;
-            }            const data = await res.json();
+            }
+            const data = await res.json();
             if (data.stats) {
                 setStats(data.stats);
             }
             if (data.user?.name) {
-                setUserName(data.user.name);
+                setUser({ name: data.user.name, email: data.user.email });
             }
         } catch (error) {
             console.error('Failed to fetch dashboard data', error);
@@ -41,11 +43,16 @@ export default function DashboardPage() {
         } finally {
             setLoading(false);
         }
-    };    return (
-        <div className="space-y-6 md:space-y-8 animate-fade-in pb-8">            {/* Header */}
+    };    const displayName = user?.name || 'there';
+
+    return (
+        <div className="space-y-6 md:space-y-8 animate-fade-in pb-8">
+            {/* Header */}
             <div className="flex flex-col md:flex-row justify-between md:items-end gap-3">
                 <div>
-                    <h1 className="font-heading text-3xl md:text-4xl font-bold text-secondary mb-2">Good Morning, {userName}!</h1>
+                    <h1 className="font-heading text-3xl md:text-4xl font-bold text-secondary mb-2">
+                        Good Morning, {displayName}!
+                    </h1>
                     <p className="text-base md:text-lg text-foreground/60">Ready to find your balance today?</p>
                 </div>
                 <div className="hidden md:flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-100 text-sm font-medium text-secondary">
