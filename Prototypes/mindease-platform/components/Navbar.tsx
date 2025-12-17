@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image'
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
@@ -59,7 +60,7 @@ export default function Navbar() {
                     {/* Logo */}
                     <div className="font-heading text-2xl font-bold text-secondary tracking-tight">
                         <Link href="/" className="flex items-center gap-2">
-                            <span className="text-3xl">🌿</span>
+                            <Image src="/mindease-logo.png" alt="Mindease Logo" width={30} height={35}/>
                             MindEase
                         </Link>
                     </div>

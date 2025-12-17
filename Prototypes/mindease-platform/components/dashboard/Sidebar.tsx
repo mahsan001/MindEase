@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image'
 import { usePathname } from 'next/navigation';
 import { Home, MessageSquare, Book, BarChart2, Lightbulb, Settings, HelpCircle, LogOut } from 'lucide-react';
 
@@ -25,7 +26,7 @@ export default function Sidebar() {
             {/* Logo Area */}
             <div className="p-8 pb-4">
                 <Link href="/" className="flex items-center gap-2 font-heading text-2xl font-bold text-secondary">
-                    <span className="text-3xl">🌿</span>
+                    <Image src="/mindease-logo.png" alt="Mindease Logo" width={30} height={35}/>
                     MindEase
                 </Link>
             </div>
