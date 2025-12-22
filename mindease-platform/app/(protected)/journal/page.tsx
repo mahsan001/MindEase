@@ -28,6 +28,7 @@ export default function JournalPage() {
     const [aiAnalysisResult, setAiAnalysisResult] = useState<string>('');
     const [analyzingAI, setAnalyzingAI] = useState(false);
     const [isEncrypted, setIsEncrypted] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
     const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     const moods = ['😢', '😟', '😐', '😊', '😄'];    useEffect(() => {
@@ -246,7 +247,19 @@ export default function JournalPage() {
                 setAnalyzingAI(false);
             }
         }
-    };    return (
+    };
+
+    // Filter entries based on search query
+    const filteredEntries = entries.filter((entry) => {
+        if (!searchQuery.trim()) return true;
+        const query = searchQuery.toLowerCase();
+        return (
+            entry.title.toLowerCase().includes(query) ||
+            entry.content.toLowerCase().includes(query)
+        );
+    });
+
+    return (
         <div className="flex flex-col">
             {/* Encryption Status Banner */}
             {isEncrypted && (
@@ -412,13 +425,15 @@ export default function JournalPage() {
                             <input
                                 type="text"
                                 placeholder="Search entries..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                                 className="w-full pl-11 pr-4 py-3 rounded-xl bg-white border-none shadow-sm focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm font-medium"
                             />
                         </div>
                     </div>
 
                     <div className="flex-1 p-4 space-y-3 bg-surface-alt/30 min-h-[400px] md:min-h-[500px]">
-                        {entries.map((entry, i) => (
+                        {filteredEntries.map((entry, i) => (
                             <div
                                 key={entry._id}
                                 onClick={() => handleSelectEntry(entry)}
@@ -442,6 +457,13 @@ export default function JournalPage() {
                                 </p>
                             </div>
                         ))}
+
+                        {filteredEntries.length === 0 && entries.length > 0 && (
+                            <div className="text-center py-10 text-gray-400">
+                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">🔍</div>
+                                <p className="font-medium">No entries found matching "{searchQuery}"</p>
+                            </div>
+                        )}
 
                         {entries.length === 0 && (
                             <div className="text-center py-10 text-gray-400">
