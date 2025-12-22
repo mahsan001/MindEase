@@ -117,10 +117,10 @@ return (
                 <div className="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth">
                     {showStarters ? (
                         <div className="h-full flex flex-col items-center justify-center text-center max-w-2xl mx-auto animate-fade-in px-4">
-                            <div className="w-16 md:w-20 h-16 md:h-20 bg-primary/10 rounded-full flex items-center justify-center mb-4 md:mb-6 text-primary animate-scale-in">
-                                <Sparkles size={32} className="md:w-10 md:h-10" />
+                            <div className="w-16 py-2 bg-primary/10 rounded-full flex items-center justify-center mb-4 md:mb-6 text-primary animate-scale-in">
+                                <Sparkles size={6} className="md:w-4 md:h-4" />
                             </div>
-                            <h2 className="font-heading text-2xl md:text-3xl lg:text-4xl font-bold text-secondary mb-3 md:mb-4">How can I support you today?</h2>
+                            <h2 className="font-heading text-xl md:text-2xl font-bold text-secondary mb-3 md:mb-4">How can I support you today?</h2>
                             <p className="text-foreground/60 mb-6 md:mb-10 text-base md:text-lg">Select a topic to start a conversation or type your own.</p>
 
                             <div className="grid grid-cols-2 gap-2 md:gap-3 w-full max-w-lg">
@@ -133,10 +133,10 @@ return (
                                     <button
                                         key={item.id}
                                         onClick={() => startConversation(item.id)}
-                                        className="bg-white/60 backdrop-blur-sm p-3 md:p-4 rounded-xl border border-white/40 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all text-left group animate-slide-up"
+                                        className="bg-white/60 backdrop-blur-sm p-2 rounded-xl border border-white/40 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all text-left group animate-slide-up flex gap-2 justify-center items-center"
                                         style={{ animationDelay: `${i * 0.1}s` }}
                                     >
-                                        <div className="text-xl md:text-2xl mb-1.5 md:mb-2 group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
+                                        <div className="text-lg group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
                                         <div className="font-bold text-secondary text-xs md:text-sm">{item.label}</div>
                                     </button>
                                 ))}
