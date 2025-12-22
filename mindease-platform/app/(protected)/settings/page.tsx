@@ -317,7 +317,6 @@ export default function SettingsPage() {
         { id: 'security', label: 'Security', icon: Lock },
         { id: 'notifications', label: 'Notifications', icon: Bell },
         { id: 'privacy', label: 'Privacy', icon: Shield },
-        { id: 'appearance', label: 'Appearance', icon: Palette },
         { id: 'data', label: 'Data & Account', icon: Download },
     ];    return (
         <div className="w-full max-w-5xl mx-auto">
@@ -660,46 +659,6 @@ export default function SettingsPage() {
                             <Save size={18} />
                             {loading ? 'Saving...' : 'Save Settings'}
                         </button>
-                    </div>
-                )}
-
-                {/* Appearance Tab */}
-                {activeTab === 'appearance' && (
-                    <div className="space-y-6">
-                        <div>
-                            <h2 className="text-2xl font-heading font-bold text-secondary mb-4">Appearance</h2>
-                            <p className="text-muted-foreground mb-6">Customize how MindEase looks</p>
-                        </div>
-
-                        <div>
-                            <h3 className="font-medium text-gray-900 mb-3">Theme</h3>
-                            <div className="grid grid-cols-3 gap-4">
-                                {[
-                                    { value: 'light', label: 'Light', icon: '☀️' },
-                                    { value: 'dark', label: 'Dark', icon: '🌙' },
-                                    { value: 'auto', label: 'Auto', icon: '⚡' },
-                                ].map((option) => (
-                                    <button
-                                        key={option.value}
-                                        onClick={() => setTheme(option.value as any)}
-                                        className={`p-4 rounded-xl border-2 transition-all ${
-                                            theme === option.value
-                                                ? 'border-secondary bg-secondary/5'
-                                                : 'border-gray-200 hover:border-gray-300'
-                                        }`}
-                                    >
-                                        <div className="text-3xl mb-2">{option.icon}</div>
-                                        <div className="font-medium">{option.label}</div>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="p-4 bg-blue-50 rounded-xl">
-                            <p className="text-sm text-blue-800">
-                                <strong>Note:</strong> Dark mode is coming soon! We're working hard to bring you a beautiful dark theme.
-                            </p>
-                        </div>
                     </div>
                 )}
 
