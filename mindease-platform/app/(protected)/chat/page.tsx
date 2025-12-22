@@ -116,7 +116,7 @@ return (
                         <div className="flex gap-3">
                             <button
                                 onClick={() => { setMessages([]); setShowStarters(true); }}
-                                className="px-3 md:px-4 py-2 bg-white/50 hover:bg-white/80 rounded-xl text-xs md:text-sm font-medium transition-all text-secondary border border-white/40"
+                                className="px-3 md:px-4 py-2 bg-white/50 hover:bg-white/80 rounded-xl text-xs md:text-sm font-medium transition-all text-secondary border"
                             >
                                 New Chat
                             </button>
