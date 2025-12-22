@@ -123,7 +123,7 @@ return (
                             <h2 className="font-heading text-2xl md:text-3xl lg:text-4xl font-bold text-secondary mb-3 md:mb-4">How can I support you today?</h2>
                             <p className="text-foreground/60 mb-6 md:mb-10 text-base md:text-lg">Select a topic to start a conversation or type your own.</p>
 
-                            <div className="grid grid-cols-2 gap-3 md:gap-4 w-full">
+                            <div className="grid grid-cols-2 gap-2 md:gap-3 w-full max-w-lg">
                                 {[
                                     { id: 'anxious', icon: '😟', label: "I'm feeling anxious" },
                                     { id: 'down', icon: '😔', label: "I'm feeling down" },
@@ -133,11 +133,11 @@ return (
                                     <button
                                         key={item.id}
                                         onClick={() => startConversation(item.id)}
-                                        className="bg-white/60 backdrop-blur-sm p-4 md:p-6 rounded-2xl border border-white/40 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all text-left group animate-slide-up"
+                                        className="bg-white/60 backdrop-blur-sm p-3 md:p-4 rounded-xl border border-white/40 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all text-left group animate-slide-up"
                                         style={{ animationDelay: `${i * 0.1}s` }}
                                     >
-                                        <div className="text-2xl md:text-3xl mb-2 md:mb-3 group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
-                                        <div className="font-bold text-secondary text-sm md:text-lg">{item.label}</div>
+                                        <div className="text-xl md:text-2xl mb-1.5 md:mb-2 group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
+                                        <div className="font-bold text-secondary text-xs md:text-sm">{item.label}</div>
                                     </button>
                                 ))}
                             </div>

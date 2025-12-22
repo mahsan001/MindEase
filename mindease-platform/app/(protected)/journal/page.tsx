@@ -256,7 +256,7 @@ export default function JournalPage() {
                     </div>
                     <div className="flex-1">
                         <p className="text-sm font-medium text-green-900">
-                            🔒 End-to-End Encryption Active
+                            End-to-End Encryption Active
                         </p>
                         <p className="text-xs text-green-700">
                             Your journal entries are encrypted before being saved. Only you can read them.

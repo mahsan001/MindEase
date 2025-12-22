@@ -506,7 +506,7 @@ export default function SettingsPage() {
                                 {/* Info Box */}
                                 <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
                                     <p className="text-sm text-blue-800">
-                                        <strong>🔒 End-to-End Encryption:</strong> Your journal entries are encrypted on your device before being sent to the server. 
+                                        <strong>End-to-End Encryption:</strong> Your journal entries are encrypted on your device before being sent to the server. 
                                         The encryption key is stored locally in your browser. <strong>Important:</strong> If you clear your browser data or 
                                         use a different device, you'll need to import your backup key to access encrypted entries.
                                     </p>
