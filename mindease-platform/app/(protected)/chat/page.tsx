@@ -48,10 +48,19 @@ const handleSendMessage = async (text: string) => {
     setLoading(true);
 
     try {
+        // Convert messages to OpenAI format and include conversation history
+        const conversationHistory = messages.map(msg => ({
+            role: msg.sender === 'user' ? 'user' : 'assistant',
+            content: msg.text
+        }));
+
         const res = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: text }),
+            body: JSON.stringify({ 
+                message: text,
+                history: conversationHistory 
+            }),
         });
 
         const data = await res.json();
