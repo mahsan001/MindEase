@@ -29,12 +29,35 @@ export default function JournalPage() {
     const [analyzingAI, setAnalyzingAI] = useState(false);
     const [isEncrypted, setIsEncrypted] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
     const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     const moods = ['😢', '😟', '😐', '😊', '😄'];    useEffect(() => {
         fetchEntries();
         setIsEncrypted(hasEncryptionKey());
-    }, []);    // Sentiment analysis effect with debounce
+    }, []);
+
+    // Scroll handler for infinite loading
+    useEffect(() => {
+        const handleScroll = () => {
+            if (!scrollContainerRef.current || !hasMore || loadingMore) return;
+
+            const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+            // Load more when scrolled to 80% of the container
+            if (scrollTop + clientHeight >= scrollHeight * 0.8) {
+                loadMoreEntries();
+            }
+        };
+
+        const container = scrollContainerRef.current;
+        if (container) {
+            container.addEventListener('scroll', handleScroll);
+            return () => container.removeEventListener('scroll', handleScroll);
+        }
+    }, [hasMore, loadingMore, page]);    // Sentiment analysis effect with debounce
     useEffect(() => {
         // Clear existing timer
         if (debounceTimerRef.current) {
@@ -74,9 +97,10 @@ export default function JournalPage() {
         };
     }, [formData.content, moodManuallySet, showAIAnalysis]);
 
-    const fetchEntries = async () => {
+    const fetchEntries = async (pageNum = 1, append = false) => {
         try {
-            const res = await fetch('/api/journal');
+            if (!append) setLoading(true);
+            const res = await fetch(`/api/journal?page=${pageNum}&limit=10`);
             const data = await res.json();
             if (data.journals) {
                 // Decrypt all journal entries
@@ -98,11 +122,29 @@ export default function JournalPage() {
                         }
                     })
                 );
-                setEntries(decryptedJournals);
+                
+                if (append) {
+                    setEntries(prev => [...prev, ...decryptedJournals]);
+                } else {
+                    setEntries(decryptedJournals);
+                }
+                
+                setHasMore(data.pagination?.hasMore || false);
             }
         } catch (error) {
             console.error('Failed to fetch journals', error);
+        } finally {
+            setLoading(false);
+            setLoadingMore(false);
         }
+    };
+
+    const loadMoreEntries = async () => {
+        if (loadingMore || !hasMore) return;
+        setLoadingMore(true);
+        const nextPage = page + 1;
+        setPage(nextPage);
+        await fetchEntries(nextPage, true);
     };
 
     const { showToast } = useToast();    const handleSave = async () => {
@@ -138,7 +180,9 @@ export default function JournalPage() {
                 });
 
                 if (res.ok) {
-                    await fetchEntries();
+                    setPage(1);
+                    setHasMore(true);
+                    await fetchEntries(1, false);
                     showToast('Journal entry updated successfully!', 'success');
                     setSelectedEntry(null);
                     setFormData({ title: '', content: '', mood: '😐' });
@@ -159,7 +203,9 @@ export default function JournalPage() {
                 });
 
                 if (res.ok) {
-                    await fetchEntries();
+                    setPage(1);
+                    setHasMore(true);
+                    await fetchEntries(1, false);
                     showToast('Journal entry saved successfully!', 'success');
                     setFormData({ title: '', content: '', mood: '😐' });
                     setMoodManuallySet(false);
@@ -184,7 +230,9 @@ export default function JournalPage() {
             });
 
             if (res.ok) {
-                await fetchEntries();
+                setPage(1);
+                setHasMore(true);
+                await fetchEntries(1, false);
                 showToast('Journal entry deleted successfully!', 'success');
                 // Reset to new entry mode
                 setSelectedEntry(null);
@@ -432,7 +480,10 @@ export default function JournalPage() {
                         </div>
                     </div>
 
-                    <div className="flex-1 p-4 space-y-3 bg-surface-alt/30 min-h-[400px] md:min-h-[500px]">
+                    <div 
+                        ref={scrollContainerRef}
+                        className="flex-1 p-4 space-y-3 bg-surface-alt/30 min-h-[400px] md:min-h-[500px] overflow-y-auto"
+                    >
                         {filteredEntries.map((entry, i) => (
                             <div
                                 key={entry._id}
@@ -458,17 +509,33 @@ export default function JournalPage() {
                             </div>
                         ))}
 
-                        {filteredEntries.length === 0 && entries.length > 0 && (
+                        {loadingMore && (
+                            <div className="text-center py-4">
+                                <div className="inline-flex items-center gap-2 text-sm text-gray-500">
+                                    <div className="w-4 h-4 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                                    Loading more entries...
+                                </div>
+                            </div>
+                        )}
+
+                        {filteredEntries.length === 0 && entries.length > 0 && !loading && (
                             <div className="text-center py-10 text-gray-400">
                                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">🔍</div>
                                 <p className="font-medium">No entries found matching "{searchQuery}"</p>
                             </div>
                         )}
 
-                        {entries.length === 0 && (
+                        {entries.length === 0 && !loading && (
                             <div className="text-center py-10 text-gray-400">
                                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">📝</div>
                                 <p className="font-medium">No entries yet. Start writing!</p>
+                            </div>
+                        )}
+
+                        {loading && entries.length === 0 && (
+                            <div className="text-center py-10 text-gray-400">
+                                <div className="w-4 h-4 border-2 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-4"></div>
+                                <p className="font-medium">Loading entries...</p>
                             </div>
                         )}
                     </div>
