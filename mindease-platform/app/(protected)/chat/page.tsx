@@ -220,17 +220,17 @@ return (
                 </div>
 
                 {/* Crisis Resources */}
-                <div className="bg-gradient-to-br from-secondary to-secondary-hover rounded-3xl p-6 text-white shadow-xl shadow-secondary/20 text-center relative overflow-hidden">
+                <div className="bg-gradient-to-br from-secondary to-secondary-hover rounded-3xl p-6 text-white shadow-xl shadow-secondary/20 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
-                    <h4 className="font-heading font-bold text-lg mb-4 relative z-10">🆘 Need Immediate Help?</h4>
-                    <div className="space-y-4 text-sm opacity-95 relative z-10">
+                    <h4 className="font-heading font-bold text-lg mb-3 relative z-10 text-center"> Mental Health Crisis?</h4>
+                    <div className="space-y-3 text-sm opacity-95 relative z-10">
                         <div>
-                            <strong className="block mb-1 opacity-80">Crisis Helpline:</strong>
-                            <div className="font-mono bg-white/10 py-2 rounded-xl border border-white/10 text-lg tracking-wider">1-800-273-8255</div>
+                            <strong className="block mb-1.5 opacity-90 text-xs">Umang Pakistan Mental Health Helpline:</strong>
+                            <div className="font-mono bg-white/10 py-2 px-3 rounded-xl border border-white/10 text-base tracking-wide">0800-00-444 (Toll-free)</div>
                         </div>
                         <div>
-                            <strong className="block mb-1 opacity-80">Text Support:</strong>
-                            <div className="font-mono bg-white/10 py-2 rounded-xl border border-white/10 text-lg tracking-wider">Text "HELLO" to 741741</div>
+                            <strong className="block mb-1.5 opacity-90 text-xs">Emergency Services:</strong>
+                            <div className="font-mono bg-white/10 py-2 px-3 rounded-xl border border-white/10 text-base tracking-wide">1122 (Medical Emergency)</div>
                         </div>
                     </div>
                 </div>
