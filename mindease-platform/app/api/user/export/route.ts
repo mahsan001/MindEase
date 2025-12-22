@@ -39,10 +39,11 @@ export async function GET() {
                 accountCreated: user.createdAt,
             },
             journals: journals.map(j => ({
+                title: j.title,
                 content: j.content,
                 mood: j.mood,
                 sentiment: j.sentiment,
-                aiInsights: j.aiInsights,
+                moodManuallySet: j.moodManuallySet,
                 createdAt: j.createdAt,
                 updatedAt: j.updatedAt,
             })),
@@ -57,13 +58,8 @@ export async function GET() {
             },
         };
 
-        // Return as JSON file
-        return new NextResponse(JSON.stringify(exportData, null, 2), {
-            headers: {
-                'Content-Type': 'application/json',
-                'Content-Disposition': `attachment; filename="mindease-data-${new Date().toISOString().split('T')[0]}.json"`,
-            },
-        });
+        // Return as JSON (encrypted data - will be decrypted client-side)
+        return NextResponse.json(exportData);
     } catch (error) {
         console.error('Error exporting data:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

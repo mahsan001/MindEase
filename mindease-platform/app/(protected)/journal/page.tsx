@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Trash2, Save, Plus, Search, Sparkles, Calendar, X } from 'lucide-react';
+import { Trash2, Save, Plus, Search, Sparkles, Calendar, X, Lock } from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
+import { encryptText, decryptText, hasEncryptionKey } from '@/lib/encryption';
 
 interface JournalEntry {
     _id: string;
@@ -26,10 +27,12 @@ export default function JournalPage() {
     const [moodManuallySet, setMoodManuallySet] = useState(false);
     const [aiAnalysisResult, setAiAnalysisResult] = useState<string>('');
     const [analyzingAI, setAnalyzingAI] = useState(false);
+    const [isEncrypted, setIsEncrypted] = useState(false);
     const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     const moods = ['😢', '😟', '😐', '😊', '😄'];    useEffect(() => {
         fetchEntries();
+        setIsEncrypted(hasEncryptionKey());
     }, []);    // Sentiment analysis effect with debounce
     useEffect(() => {
         // Clear existing timer
@@ -75,7 +78,26 @@ export default function JournalPage() {
             const res = await fetch('/api/journal');
             const data = await res.json();
             if (data.journals) {
-                setEntries(data.journals);
+                // Decrypt all journal entries
+                const decryptedJournals = await Promise.all(
+                    data.journals.map(async (journal: JournalEntry) => {
+                        try {
+                            return {
+                                ...journal,
+                                title: await decryptText(journal.title),
+                                content: await decryptText(journal.content),
+                            };
+                        } catch (error) {
+                            console.error('Failed to decrypt journal entry:', error);
+                            return {
+                                ...journal,
+                                title: '[Encrypted - Unable to decrypt]',
+                                content: '[This entry cannot be decrypted. The encryption key may have changed.]',
+                            };
+                        }
+                    })
+                );
+                setEntries(decryptedJournals);
             }
         } catch (error) {
             console.error('Failed to fetch journals', error);
@@ -87,7 +109,11 @@ export default function JournalPage() {
         setLoading(true);
 
         try {
-            // Get final sentiment analysis
+            // Encrypt title and content before saving
+            const encryptedTitle = await encryptText(formData.title || 'Untitled Entry');
+            const encryptedContent = await encryptText(formData.content);
+
+            // Get final sentiment analysis (using unencrypted content for analysis)
             const sentimentRes = await fetch('/api/sentiment', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -102,7 +128,9 @@ export default function JournalPage() {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        ...formData,
+                        title: encryptedTitle,
+                        content: encryptedContent,
+                        mood: formData.mood,
                         sentiment: sentimentData.sentiment || 'Neutral',
                         moodManuallySet,
                     }),
@@ -121,7 +149,9 @@ export default function JournalPage() {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        ...formData,
+                        title: encryptedTitle,
+                        content: encryptedContent,
+                        mood: formData.mood,
                         sentiment: sentimentData.sentiment || 'Neutral',
                         moodManuallySet,
                     }),
@@ -218,6 +248,23 @@ export default function JournalPage() {
         }
     };    return (
         <div className="flex flex-col">
+            {/* Encryption Status Banner */}
+            {isEncrypted && (
+                <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-2xl flex items-center gap-3">
+                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                        <Lock size={16} className="text-green-600" />
+                    </div>
+                    <div className="flex-1">
+                        <p className="text-sm font-medium text-green-900">
+                            🔒 End-to-End Encryption Active
+                        </p>
+                        <p className="text-xs text-green-700">
+                            Your journal entries are encrypted before being saved. Only you can read them.
+                        </p>
+                    </div>
+                </div>
+            )}
+
             <div className="flex-1 flex flex-col lg:flex-row gap-4 md:gap-8 h-full">
 
                 {/* Editor Section */}
